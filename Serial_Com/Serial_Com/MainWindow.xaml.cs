@@ -9,6 +9,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO.Ports;
+using Serial_Com.Services;
+using System.Diagnostics;
 
 namespace Serial_Com
 {
@@ -17,10 +19,26 @@ namespace Serial_Com
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        //Make an instance of the Serial Service class
+        IConnectionService serialHelper = new SerialService();
+
+        //Make a label and a dropdown window
+        Label com_port_label = new Label { Content = "Available Ports: ", Margin = new Thickness(10), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+        ComboBox com_port_dropdown = new ComboBox { Margin = new Thickness(10), MinWidth = 100, MinHeight = 20, IsEditable = false, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+        //Add one for the supported baud rates
+        Label baud_rate_label = new Label { Content = "Selected baud: ", Margin = new Thickness(10), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+        ComboBox baud_rate_dropdown = new ComboBox { Margin = new Thickness(10), MinWidth = 100, MinHeight = 20, IsEditable = false, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+        Button connect_button = new Button { Margin = new Thickness(10), Content = "Connect" };
+        CancellationToken readCancelToken = new CancellationToken();
+
         public MainWindow()
         {
 
+            Debug.WriteLine("Started\n\r");
+
             InitializeComponent();
+
 
             int rows = 3;
             int cols = 3;
@@ -37,20 +55,10 @@ namespace Serial_Com
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             }
 
-            //Make a label and a dropdown window
-            var com_port_label = new Label { Content = "Available Ports: ", Margin = new Thickness(10) };
-            var com_port_dropdown = new ComboBox { Margin = new Thickness(10), MinWidth = 100, MinHeight = 20, IsEditable = false};
             com_port_dropdown.DropDownOpened += ComPortComboBoxOpen;
-            //Add one for the supported baud rates
-            var baud_rate_label = new Label { Content = "Selected baud: ", Margin = new Thickness(10) };
-            var baud_rate_dropdown = new ComboBox { Margin = new Thickness(10), MinWidth = 100, MinHeight = 20, IsEditable = false };
-            baud_rate_dropdown.ItemsSource = new[] { "9600", "19200", "38400", "57600", "115200"};
+            baud_rate_dropdown.ItemsSource = new[] { 9600, 19200, 38400, 57600, 115200 };
             baud_rate_dropdown.SelectedIndex = 4;
-
-            var connect_button = new Button { Margin = new Thickness(10), Content = "Connect"};
             connect_button.Click += ConnectButtonClicked;
-
-
 
             grid.Children.Add(com_port_label);
             grid.Children.Add(com_port_dropdown);
@@ -72,31 +80,58 @@ namespace Serial_Com
 
             Content = grid;
 
-
-
-
         }
 
         private void ComPortComboBoxOpen(object? sender, EventArgs e)
         {
             if (sender is ComboBox box)
             {
+                Debug.WriteLine("In the dropdown\n\r");
                 box.ItemsSource = SerialPort.GetPortNames();
             }
 
         }
 
-        private void ConnectButtonClicked(object? sender, EventArgs e)
+        private async void ConnectButtonClicked(object? sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Connect Button Clicked\n\r");
             if (sender is Button btn)
             {
-                if ((string)btn.Content == "Connect")
+                Debug.WriteLine("In the Connection button clicked\n\r");
+
+                string? port = com_port_dropdown.SelectedItem as string;
+                int baud = baud_rate_dropdown.SelectedItem is int b ? b :115200;
+
+                if (serialHelper.IsConnected)
                 {
-                    btn.Content = "Disconnect";
+
+                    Debug.WriteLine("Inside the else\n\r");
+                    try
+                    {
+                        await serialHelper.DisconnectAsync();
+                        btn.Content = "Connect";
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Hit Exception on Disconnect\n\r");
+                        MessageBox.Show($"Disconnection Error : {port}, with Exception {ex}");
+                    }
                 }
                 else
                 {
-                    btn.Content = "Connect";
+                    Debug.WriteLine("Inside the serialhelper.IsConnected\n\r");
+                    try
+                    {
+                        await serialHelper.ConnectAsync(port, baud, 200, readCancelToken);
+                        btn.Content = "Disconnect";
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Hit Exception on Connect\n\r");
+                        MessageBox.Show($"Could Not Connect to : {port}, with Exception {ex}");
+                        return;
+                    }
+
                 }
 
             }
