@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using Serial_Com.Services;
+using System;
+using System.Diagnostics;
+using System.IO.Ports;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,9 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.IO.Ports;
-using Serial_Com.Services;
-using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace Serial_Com
 {
@@ -35,10 +37,7 @@ namespace Serial_Com
         public MainWindow()
         {
 
-            Debug.WriteLine("Started\n\r");
-
             InitializeComponent();
-
 
             int rows = 3;
             int cols = 3;
@@ -55,7 +54,9 @@ namespace Serial_Com
                 grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             }
 
-            com_port_dropdown.DropDownOpened += ComPortComboBoxOpen;
+            serialHelper.ConnectionChanged += ConnectionChange;
+
+                        com_port_dropdown.DropDownOpened += ComPortComboBoxOpen;
             baud_rate_dropdown.ItemsSource = new[] { 9600, 19200, 38400, 57600, 115200 };
             baud_rate_dropdown.SelectedIndex = 4;
             connect_button.Click += ConnectButtonClicked;
@@ -86,49 +87,62 @@ namespace Serial_Com
         {
             if (sender is ComboBox box)
             {
-                Debug.WriteLine("In the dropdown\n\r");
                 box.ItemsSource = SerialPort.GetPortNames();
             }
 
         }
 
+        private void ConnectionChange(object? sender, bool connectionState)
+        {
+
+            if (connectionState == true)
+            {
+                Dispatcher.Invoke(() => connect_button.Content = "Disconnect");
+            }
+            else
+            {
+                Dispatcher.Invoke(() => connect_button.Content = "Connect");
+            }
+
+        }
+
+
+
         private async void ConnectButtonClicked(object? sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("Connect Button Clicked\n\r");
             if (sender is Button btn)
             {
-                Debug.WriteLine("In the Connection button clicked\n\r");
 
-                string? port = com_port_dropdown.SelectedItem as string;
-                int baud = baud_rate_dropdown.SelectedItem is int b ? b :115200;
+                string? port = (string)com_port_dropdown.SelectedItem;
+                int baud = (int)baud_rate_dropdown.SelectedItem;
+
+                //Check to make sure the port is not null
+                if (port is null)
+                {
+                    return;
+                }
 
                 if (serialHelper.IsConnected)
                 {
 
-                    Debug.WriteLine("Inside the else\n\r");
                     try
                     {
                         await serialHelper.DisconnectAsync();
-                        btn.Content = "Connect";
                     }
-                    catch (Exception ex)
+                    catch //(Exception ex)
                     {
-                        Debug.WriteLine("Hit Exception on Disconnect\n\r");
-                        MessageBox.Show($"Disconnection Error : {port}, with Exception {ex}");
+                        MessageBox.Show($"Disconnection Error : {port}");
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("Inside the serialhelper.IsConnected\n\r");
                     try
                     {
                         await serialHelper.ConnectAsync(port, baud, 200, readCancelToken);
-                        btn.Content = "Disconnect";
                     }
-                    catch (Exception ex)
+                    catch //(Exception ex)
                     {
-                        Debug.WriteLine("Hit Exception on Connect\n\r");
-                        MessageBox.Show($"Could Not Connect to : {port}, with Exception {ex}");
+                        MessageBox.Show($"Could Not Connect to : {port}");
                         return;
                     }
 

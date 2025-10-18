@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Serial_Com.Services
 {
@@ -35,6 +37,7 @@ namespace Serial_Com.Services
         public bool IsConnected => _port?.IsOpen ?? false;
         public string? Endpoint => _port is null ? null : $"{_port.PortName} @ {_port.BaudRate}";
         public event EventHandler<string>? DataReceived;
+        public event EventHandler<bool>? ConnectionChanged;
 
 
         //This Opens the serial port on the UI thread - should fix later
@@ -57,6 +60,7 @@ namespace Serial_Com.Services
 
             //Open the serial port
             _port.Open();
+            ConnectionChanged?.Invoke(this, true);
 
             //Start background read loop
             //Link our internal cancelation token with the one passed to the method so that
@@ -106,6 +110,8 @@ namespace Serial_Com.Services
                 }
             }
 
+            ConnectionChanged?.Invoke(this, false);
+
             await Task.CompletedTask;
 
         }
@@ -134,21 +140,38 @@ namespace Serial_Com.Services
                         DataReceived?.Invoke(this, line);
                     }
                 }
-                catch (OperationCanceledException)
-                {
-                    //Cancelation requested
-                }
-                catch (ObjectDisposedException)
-                {
-                    //Port wwas closed/disposed during disconnect
-                }
+                //catch (OperationCanceledException)
+                //{
+                //    //Cancelation requested
+                //    break;
+                //}
+                //catch (ObjectDisposedException)
+                //{
+                //    //Port was closed/disposed during disconnect
+                //    break;
+                //}
+                //catch (IOException ioEx)
+                //{
+                //    //IO Exception
+                //    //ConnectionChanged?.Invoke(this, IsConnected);
+                //    DataReceived?.Invoke(this, $"[ERROR] {ioEx.Message}");
+                //    await DisconnectAsync();
+                //    break;
+                //}
+                //catch (UnauthorizedAccessException uaex)
+                //{
+                //    //Attempted to access a file or directory 
+                //    DataReceived?.Invoke(this, $"[ERROR] {uaex.Message}");
+                //    await DisconnectAsync();
+                //    break;
+                //}
                 catch (Exception ex)
                 {
                     //Any unexpected error - report it, then exit
                     DataReceived?.Invoke(this, $"[ERROR] {ex.Message}");
+                    await DisconnectAsync();
                     break;
                 }
-
             }
         }
     }
