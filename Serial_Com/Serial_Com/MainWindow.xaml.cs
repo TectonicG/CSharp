@@ -59,7 +59,7 @@ namespace Serial_Com
         }
 
 
-        private async void SendValveTest(object? sender, RoutedEventArgs e)
+        private async void ToggleValve(object? sender, RoutedEventArgs e)
         {
 
             if (sender is not Button btn)
@@ -239,7 +239,7 @@ namespace Serial_Com
             {
                 int ID = i + 1;
                 valve_buttons[i] = new Button { Margin = new Thickness(10), Content = $"Enable Valve {ID}", IsEnabled = false, Tag = ID, Height = 20, Width = 150, Background = Brushes.Red }; 
-                valve_buttons[i].Click += SendValveTest;
+                valve_buttons[i].Click += ToggleValve;
 
             }
         }
