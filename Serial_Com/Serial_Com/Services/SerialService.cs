@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,30 +37,38 @@ namespace Serial_Com.Services
         private CancellationTokenSource? _ctsForReadLoop;
         public bool IsConnected => _port?.IsOpen ?? false;
         public string? Endpoint => _port is null ? null : $"{_port.PortName} @ {_port.BaudRate}";
-        public event EventHandler<string>? DataReceived;
+        public event EventHandler<ReadOnlyMemory<byte>>? DataReceived;
+        public event EventHandler<ReadOnlyMemory<byte>>? MessageReceived;
+        private List<byte>? _msgBuffer = new(4096);
+        private byte[]? _endLineAsBytes;
         public event EventHandler<bool>? ConnectionChanged;
+        private Task? _readLoop;
 
 
-        //This Opens the serial port on the UI thread - should fix later
-        //This starts the ReadLoopAsync method to read in serial data - This reall is async (On another thread) 
-        public async Task ConnectAsync(string portName, int baud, int timeout,  CancellationToken cancellationToken)
+
+        /*
+         * Connects to a serial port Async
+         */
+        public async Task ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken)
         {
             if (IsConnected)
             {
                 await DisconnectAsync();
             }
 
+            System.Diagnostics.Debug.WriteLine($"This is the endline selected {endline}");
+
             //Serial port options configured
+            _endLineAsBytes = Encoding.ASCII.GetBytes(endline);
             _port = new SerialPort(portName, baud)
             {
                 ReadTimeout = timeout,
                 WriteTimeout = timeout,
-                NewLine = "\r\n",
-                Encoding = Encoding.ASCII
+                NewLine = endline,
             };
 
             //Open the serial port
-            _port.Open();
+            await Task.Run(() => _port.Open());
             ConnectionChanged?.Invoke(this, true);
 
             //Start background read loop
@@ -69,22 +78,60 @@ namespace Serial_Com.Services
             //Ignore the return value of Task.Run because we are going to fire this loop and forget about it
             //Task.Run schedules ReadLoopAsync on a thread pool so it doesn't block the UI thread
             //We pass the cancelation token here so that it can check to see if it needs to terminate
-            _ = Task.Run(() => ReadLoopAsync(_ctsForReadLoop.Token));
+            _readLoop = Task.Run(() => ReadLoopAsync(_ctsForReadLoop.Token));
 
             //This keeps the Async signiture consistent
             //So I could call this methos as await Task
-            await Task.CompletedTask;
-
         }
 
-        //TODO: Make this method wait until the ReadLoopAsync is done canceling befoe the serial port close
+
+        /*
+         * Disonnects a serial port Async
+         */
         public async Task DisconnectAsync()
         {
+            //Cancel out of read loop
+            _ctsForReadLoop?.Cancel();
 
+            if (IsConnected)
+            {
+                try
+                {
+                    _port!.Close();
+                }
+                catch
+                {
+                    //Do Nothing
+                }
+            }
+
+            if (_readLoop is not null)
+            {
+                try
+                {
+
+                    await _readLoop;
+                }
+                finally
+                {
+                    _readLoop = null;
+                }
+
+            }
+
+            DisconnectFromPort();
+        }
+
+
+        /*
+         * The method that actually closes the serial port and sends out connection changed
+         * 
+         */
+        private void DisconnectFromPort()
+        {
             //Try and cancel the read loop
             try
             {
-                _ctsForReadLoop?.Cancel();
                 _ctsForReadLoop?.Dispose();
                 _ctsForReadLoop = null;
             }
@@ -112,67 +159,87 @@ namespace Serial_Com.Services
 
             ConnectionChanged?.Invoke(this, false);
 
-            await Task.CompletedTask;
-
         }
+
+        /*
+        * Reads the serial data Async
+        */
         private async Task ReadLoopAsync(CancellationToken ct)
         {
+            //Make sure there is an endline and it's not null
+            if (_endLineAsBytes is null || _endLineAsBytes.Length == 0)
+            {
+                throw new InvalidOperationException("Endline must not be empty");
+            }
+
+            var buf = new byte[4096];
 
             while (!ct.IsCancellationRequested && IsConnected)
             {
 
                 try
                 {
-                    string? line = await Task.Run(() =>
+                    int numBytesRead = 0;
+                    try
                     {
-                        try
-                        {
-                            return _port!.ReadLine();
-                        }
-                        catch (TimeoutException)
-                        {
-                            return null;
-                        }
-                    }, ct);
+                        numBytesRead = await _port!.BaseStream.ReadAsync(buf, 0, buf.Length, ct).ConfigureAwait(false);
 
-                    if (!string.IsNullOrEmpty(line))
+                        if (numBytesRead == 0)
+                        {
+                            break;
+                        }
+                    }
+                    //If the user canceled the opperation intentionally 
+                    //You get the same thing on an unplug so i wanted to differentiate here
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested)
                     {
-                        DataReceived?.Invoke(this, line);
+                        //Cancelation requested
+                        break;
+                    }
+
+                    //If we actually read bytes
+                    if (numBytesRead != 0)
+                    {
+                        //Data Received callback (not that useful since it can contain broken up messages)
+                        DataReceived?.Invoke(this, buf.AsMemory(0, numBytesRead));
+                        //Add the incoming data to the list the holds a collection of the incoming bytes
+                        _msgBuffer?.AddRange(new ArraySegment<byte>(buf, 0, numBytesRead));
+                        //Look for the delimiter index
+                        int delimIndex = CollectionsMarshal.AsSpan(_msgBuffer).IndexOf(_endLineAsBytes);
+                        //If the delim index was not found the retunr value is -1
+                        while (delimIndex > 0)
+                        {
+                            //Pop out the message from 0 to the delim + enline range (This includes the end line) (Good for me)
+                            MessageReceived?.Invoke(this, _msgBuffer?.GetRange(0, delimIndex + _endLineAsBytes.Length).ToArray());
+                            //Remove that message from the msgbuffer list
+                            _msgBuffer?.RemoveRange(0, delimIndex + _endLineAsBytes.Length);
+                            //Look for another delimiter
+                            delimIndex = CollectionsMarshal.AsSpan(_msgBuffer).IndexOf(_endLineAsBytes);
+                        }
+
                     }
                 }
-                //catch (OperationCanceledException)
-                //{
-                //    //Cancelation requested
-                //    break;
-                //}
-                //catch (ObjectDisposedException)
-                //{
-                //    //Port was closed/disposed during disconnect
-                //    break;
-                //}
-                //catch (IOException ioEx)
-                //{
-                //    //IO Exception
-                //    //ConnectionChanged?.Invoke(this, IsConnected);
-                //    DataReceived?.Invoke(this, $"[ERROR] {ioEx.Message}");
-                //    await DisconnectAsync();
-                //    break;
-                //}
-                //catch (UnauthorizedAccessException uaex)
-                //{
-                //    //Attempted to access a file or directory 
-                //    DataReceived?.Invoke(this, $"[ERROR] {uaex.Message}");
-                //    await DisconnectAsync();
-                //    break;
-                //}
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
-                    //Any unexpected error - report it, then exit
-                    DataReceived?.Invoke(this, $"[ERROR] {ex.Message}");
-                    await DisconnectAsync();
+                    System.Diagnostics.Debug.WriteLine($"The exception is: {ex}");
+                    //Other exceptions such as being unplugged
+                    DisconnectFromPort();
                     break;
                 }
             }
         }
+
+        public Task WriteAsync(ReadOnlyMemory<byte> data, CancellationToken ct)
+        {
+
+
+            if (!IsConnected || _port == null || data.Length == 0)
+            {
+                return Task.CompletedTask;
+            }
+
+            return _port.BaseStream.WriteAsync(data, ct).AsTask();
+        }
     }
 }
+

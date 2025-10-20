@@ -12,14 +12,15 @@ namespace Serial_Com.Services
     {
         bool IsConnected { get; }
         string? Endpoint { get; } //Com port & baud rate
-        public event EventHandler<string>? DataReceived;
+        public event EventHandler<ReadOnlyMemory<byte>>? DataReceived;
         public event EventHandler<bool>? ConnectionChanged;
+        public event EventHandler<ReadOnlyMemory<byte>>? MessageReceived;
 
 
-        Task ConnectAsync(string portName, int baud, int timeout, CancellationToken cancellationToken);
+        Task ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken);
         Task DisconnectAsync();
-        
-        //Task WriteAsync(string text, CancellationToken cancellationToken);
+
+        Task WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken);
 
     }
 }
