@@ -1,5 +1,4 @@
-﻿using Serial_Com.Services;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Text;
@@ -15,6 +14,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Google.Protobuf;
 using System.Runtime.InteropServices;
+using Serial_Com.Services.Serial;
+using Serial_Com.Services.Cobs;
 
 
 namespace Serial_Com
@@ -26,14 +27,14 @@ namespace Serial_Com
     {
 
         //Make an instance of the Serial Service class
-        IConnectionService serialHelper = new SerialService();
-
+        SerialReaderWriter fluidicsSerial = new SerialReaderWriter();
         //Make a label and a dropdown window
         Label com_port_label = new Label { Content = "Available Ports: ", Margin = new Thickness(10), VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
         ComboBox com_port_dropdown = new ComboBox { Margin = new Thickness(10), MinWidth = 100, MinHeight = 20, IsEditable = false, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
         Button connect_button = new Button { Margin = new Thickness(10), Content = "Connect" };
         const int NUM_VALVES = 10;
         Button[] valve_buttons = new Button[NUM_VALVES];
+        Button queryFlowButton = new Button { Margin = new Thickness(10), Content = "Query Flow", Height = 20, Width = 150 , IsEnabled = false}; 
         CancellationToken cancelToken = new CancellationToken();
         Grid grid = new Grid { Margin = new Thickness(12) };
 
@@ -43,36 +44,59 @@ namespace Serial_Com
 
             InitializeComponent();
 
-            int rows = 7;
+            int rows = 8;
             int cols = 2;
 
             SetupUI(rows, cols);
 
             //Connect Signals
             connect_button.Click += ConnectButtonClicked;
-            serialHelper.ConnectionChanged += ConnectionChange;
-            serialHelper.MessageReceived += IncomingData;
+            fluidicsSerial.ConnectionChanged += ConnectionChange;
+            //serialHelper.MessageReceived += IncomingData;
             com_port_dropdown.DropDownOpened += ComPortComboBoxOpen;
+            queryFlowButton.Click += QueryFlow;
 
             //Set Content 
             Content = grid;
         }
 
+        private async void QueryFlow(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn){
+                return;
+            }
+
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    QuerySystem = new QuerySystem
+                    {
+                        RequestData = 1
+                    }
+                }
+            };
+
+            await fluidicsSerial.WriteCommand(hstMsg);
+
+        }
+
 
         private async void ToggleValve(object? sender, RoutedEventArgs e)
         {
-
+            //Valves are buttons
             if (sender is not Button btn)
             {
                 return;
             }
+
             HostMessage hstMsg = new HostMessage();
             FluidicsCommand cmd = new FluidicsCommand();
             ValveControl valveControl = new ValveControl();
 
             valveControl.ValveNumber = (int)btn.Tag;
 
-            if((string)btn.Content == $"Enable Valve {btn.Tag}")
+            if ((string)btn.Content == $"Enable Valve {btn.Tag}")
             {
                 btn.Content = $"Disable Valve {btn.Tag}";
                 btn.Background = Brushes.Green;
@@ -86,24 +110,16 @@ namespace Serial_Com
             }
             cmd.Valves = valveControl;
             hstMsg.FluidicsCommand = cmd;
-            hstMsg.Sender = Sender.Host;
-            hstMsg.Token = 34; //Random for now
 
             byte[] message = hstMsg.ToByteArray();
 
-            var parsed = HostMessage.Parser.ParseFrom(message);
-            Debug.WriteLine("This is the message we are sending: ");
-            Debug.WriteLine(JsonFormatter.Default.Format(parsed));
-
-            message = Cobs.CobsEncode(message);
-
-            await WriteSerialData(message);
+            await fluidicsSerial.WriteCommand(hstMsg);
         }
-        private async Task WriteSerialData(byte[] data)
-        {
+        //private async Task WriteSerialData(byte[] data)
+        //{
 
-            await serialHelper.WriteAsync(data.AsMemory(0, data.Length), cancelToken);
-        }
+        //    await serialHelper.WriteAsync(data.AsMemory(0, data.Length));
+        //}
         private void IncomingData(object? sender, ReadOnlyMemory<byte> data)
         {
 
@@ -128,7 +144,8 @@ namespace Serial_Com
             {
                 connect_button.Content = connectionState ? "Disconnect" : "Connect";
                 com_port_dropdown.IsEnabled = !connectionState;
-                foreach(Button button in valve_buttons)
+                queryFlowButton.IsEnabled = connectionState;
+                foreach (Button button in valve_buttons)
                 {
                     button.IsEnabled = connectionState;
                 }
@@ -149,12 +166,12 @@ namespace Serial_Com
                     return;
                 }
 
-                if (serialHelper.IsConnected)
+                if (fluidicsSerial.IsConnected)
                 {
 
                     try
                     {
-                        await serialHelper.DisconnectAsync();
+                        await fluidicsSerial.DisconnectFromPort();
                     }
                     catch
                     {
@@ -165,7 +182,7 @@ namespace Serial_Com
                 {
                     try
                     {
-                        await serialHelper.ConnectAsync(port, 115200, "\0", 200, cancelToken);
+                        await fluidicsSerial.ConnectToPort(port, cancelToken);
                     }
                     catch
                     {
@@ -208,7 +225,9 @@ namespace Serial_Com
             AddUIElementToGrid(grid, valve_buttons[8], 4, 1);
             AddUIElementToGrid(grid, valve_buttons[9], 5, 1);
 
-            AddUIElementToGrid(grid, connect_button, 6, 0);
+            AddUIElementToGrid(grid, queryFlowButton, 6, 0);
+
+            AddUIElementToGrid(grid, connect_button, 7, 0);
 
         }
 
@@ -238,7 +257,7 @@ namespace Serial_Com
             for (int i = 0; i < 10; i++)
             {
                 int ID = i + 1;
-                valve_buttons[i] = new Button { Margin = new Thickness(10), Content = $"Enable Valve {ID}", IsEnabled = false, Tag = ID, Height = 20, Width = 150, Background = Brushes.Red }; 
+                valve_buttons[i] = new Button { Margin = new Thickness(10), Content = $"Enable Valve {ID}", IsEnabled = false, Tag = ID, Height = 20, Width = 150, Background = Brushes.Red };
                 valve_buttons[i].Click += ToggleValve;
 
             }
