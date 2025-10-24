@@ -32,6 +32,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
@@ -39,9 +40,9 @@
                             <RowDefinition  Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="0" x:Name="com_port_label" Content="Com Port: " Margin="10" MinHeight="20" MinWidth="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1" x:Name="com_port_box" Height="20" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" DropDownOpened="ComPortComboBoxOpen"/>
-                        <Button Grid.Row="1" Grid.Column="0" x:Name="connect_button" Height="30" Width="100" Margin="10" Content="Connect" Click="ConnectButtonClicked" HorizontalAlignment="Left"/>
+                        <Label Grid.Row="0" Grid.Column="0" Name="com_port_label" Content="Com Port: " Margin="10" MinHeight="20" MinWidth="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" Name="com_port_box" Height="20" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" DropDownOpened="ComPortComboBoxOpen"/>
+                        <Button Grid.Row="1" Grid.Column="0" Name="connect_button" Height="30" Width="100" Margin="10" Content="Connect" Click="ConnectButtonClicked" HorizontalAlignment="Left"/>
 
                     </Grid>
                 </GroupBox>
@@ -53,6 +54,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -62,7 +64,7 @@
 
                     <GroupBox Grid.Row ="0" Grid.Column="0" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
                         <GroupBox.Header>
-                            <Label Content="Valve Controls"
+                            <Label Content="Rocker Valve Controls"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontWeight="Bold"
@@ -86,54 +88,170 @@
 
                             <CheckBox Grid.Row="0" Grid.Column="0" Content = "Enable Valve Control" FontWeight="Medium" Margin="13,5,107,5" Grid.ColumnSpan="2"/>
 
-                            <Button Grid.Row="1" Grid.Column="0" x:Name="valve_one_button" Height="30" Width="100" IsEnabled="False" Tag="1" Background="Red" Margin="10" Content="Enable Valve 1" Click="ToggleValve"/>
-                            <Button Grid.Row="2" Grid.Column="0" x:Name="valve_two_button" Height="30" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
-                            <Button Grid.Row="3" Grid.Column="0" x:Name="valve_three_button" Height="30" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
-                            <Button Grid.Row="4" Grid.Column="0" x:Name="valve_four_button" Height="30" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
-                            <Button Grid.Row="5" Grid.Column="0" x:Name="valve_five_button" Height="30" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
+                            <Button Grid.Row="1" Grid.Column="0" Name="valve_one_button" Height="30" Width="100" IsEnabled="False" Tag="1" Background="Red" Margin="10" Content="Enable Valve 1" Click="ToggleValve"/>
+                            <Button Grid.Row="2" Grid.Column="0" Name="valve_two_button" Height="30" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
+                            <Button Grid.Row="3" Grid.Column="0" Name="valve_three_button" Height="30" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
+                            <Button Grid.Row="4" Grid.Column="0" Name="valve_four_button" Height="30" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
+                            <Button Grid.Row="5" Grid.Column="0" Name="valve_five_button" Height="30" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
 
-                            <Button Grid.Row="1" Grid.Column="1" x:Name="valve_six_button" Height="30" Width="100" IsEnabled="False" Tag="6" Background="Red" Margin="10" Content="Enable Valve 6" Click="ToggleValve"/>
-                            <Button Grid.Row="2" Grid.Column="1" x:Name="valve_seven_button" Height="30" Width="100" IsEnabled="False" Tag="7" Background="Red" Margin="10" Content="Enable Valve 7" Click="ToggleValve"/>
-                            <Button Grid.Row="3" Grid.Column="1" x:Name="valve_eight_button" Height="30" Width="100" IsEnabled="False" Tag="8" Background="Red" Margin="10" Content="Enable Valve 8" Click="ToggleValve"/>
-                            <Button Grid.Row="4" Grid.Column="1" x:Name="valve_nine_button" Height="30" Width="100" IsEnabled="False" Tag="9" Background="Red" Margin="10" Content="Enable Valve 9" Click="ToggleValve"/>
-                            <Button Grid.Row="5" Grid.Column="1" x:Name="valve_ten_button" Height="30" Width="100" IsEnabled="False" Tag="10" Background="Red" Margin="10" Content="Enable Valve 10" Click="ToggleValve"/>
+                            <Button Grid.Row="1" Grid.Column="1" Name="valve_six_button" Height="30" Width="100" IsEnabled="False" Tag="6" Background="Red" Margin="10" Content="Enable Valve 6" Click="ToggleValve"/>
+                            <Button Grid.Row="2" Grid.Column="1" Name="valve_seven_button" Height="30" Width="100" IsEnabled="False" Tag="7" Background="Red" Margin="10" Content="Enable Valve 7" Click="ToggleValve"/>
+                            <Button Grid.Row="3" Grid.Column="1" Name="valve_eight_button" Height="30" Width="100" IsEnabled="False" Tag="8" Background="Red" Margin="10" Content="Enable Valve 8" Click="ToggleValve"/>
+                            <Button Grid.Row="4" Grid.Column="1" Name="valve_nine_button" Height="30" Width="100" IsEnabled="False" Tag="9" Background="Red" Margin="10" Content="Enable Valve 9" Click="ToggleValve"/>
+                            <Button Grid.Row="5" Grid.Column="1" Name="valve_ten_button" Height="30" Width="100" IsEnabled="False" Tag="10" Background="Red" Margin="10" Content="Enable Valve 10" Click="ToggleValve"/>
                         </Grid>
                     </GroupBox>
 
-                    <GroupBox Grid.Row ="0" Grid.Column="1" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <GroupBox.Header>
-                            <Label Content="Pinch Valve Controls"
+                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                        <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+                            <GroupBox.Header>
+                                <Label Content="Proportional Pinch Valve Controls"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            FontWeight="Bold"
                             />
-                        </GroupBox.Header>
-                        <Grid>
+                            </GroupBox.Header>
+                            <Grid>
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                            </Grid.RowDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition  Height="Auto"/>
+                                    <RowDefinition  Height="Auto"/>
+                                    <RowDefinition  Height="Auto"/>
+                                    <RowDefinition  Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                            <Button Grid.Row="0" Grid.Column="0" x:Name="home_pinch_valve"  Height="30" Width="130" IsEnabled="False" Margin="10" Content="Home Pinch Valve"/>
-                            <TextBox Grid.Row="1" Name="pinch_valve_step_count_box" ></TextBox>
-                            <Button Grid.Row="2" Grid.Column="0" x:Name="valve_to_button" Height="30" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
-                            <Button Grid.Row="3" Grid.Column="0" x:Name="valve_hree_button" Height="30" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
-                            <Button Grid.Row="4" Grid.Column="0" x:Name="valvefour_button" Height="30" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
-                            <Button Grid.Row="5" Grid.Column="0" x:Name="valv_five_button" Height="30" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
-                        </Grid>
-                    </GroupBox>
+                                <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="home_pinch_valve_button"  Height="30" Width="130" IsEnabled="False" Margin="13, 10,0,10" Content="Home Pinch Valve" HorizontalAlignment="Left"/>
+                                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="pinch_valve_step_count_box" Width="130" HorizontalAlignment="Left" Margin="13,0,0,0"/>
+                                <Button Grid.Row="1" Grid.Column="2" Name="pinch_valve_take_steps_button" Width="80" Content="Take Steps" IsEnabled="False" Margin="10,0,0,0" HorizontalAlignment="Left"/>
+                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="disable_pinch_valve_button"  Height="30" Width="130" IsEnabled="False" Margin="13, 10,0,10" Content="Disable Pinch Valve" HorizontalAlignment="Left"/>
+                                <Label Grid.Row="3" Grid.Column="0" Name="pinch_valve_step_label" Content="Current Step: " Margin="13,0,0,0"/>
+                                <Label Grid.Row="3" Grid.Column="1" Name="pinch_valve_step_count" Content="0" Margin="0,0,0,0"/>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+                            <GroupBox.Header>
+                                <Label Content="Proportional Valve Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                            </GroupBox.Header>
+                            <Grid>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition  Height="Auto"/>
+                                    <RowDefinition  Height="Auto"/>
+                                    <RowDefinition  Height="Auto"/>
+                                    <RowDefinition  Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="home_prop_valve_button"  Height="30" Width="130" IsEnabled="False" Margin="13, 10,0,10" Content="Home Prop Valve" HorizontalAlignment="Left"/>
+                                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="prop_valve_step_count_box" Width="130" HorizontalAlignment="Left" Margin="13,0,0,0"/>
+                                <Button Grid.Row="1" Grid.Column="2" Name="prop_valve_take_steps_button" Width="80" Content="Take Steps" IsEnabled="False" Margin="10,0,0,0" HorizontalAlignment="Left"/>
+                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="disable_prop_valve_button"  Height="30" Width="130" IsEnabled="False" Margin="13, 10,0,10" Content="Disable Prop Valve" HorizontalAlignment="Left"/>
+                                <Label Grid.Row="3" Grid.Column="0" Name="prop_valve_step_label" Content="Current Step: " Margin="13,0,0,0"/>
+                                <Label Grid.Row="3" Grid.Column="1" Name="prop_valve_step_count" Content="0" Margin="0,0,0,0"/>
+                            </Grid>
+                        </GroupBox>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" >
+                        <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Medium" >
+                            <GroupBox.Header>
+                                <Label Content="Sheath Pump Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                            </GroupBox.Header>
+
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox Name="enable_sheath_pump_changes_button" Content="Enable Sheath Pump Changes" Margin="13, 5, 0, 0"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="sheath_pump_on_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="sheath_pump_on_label" Content="Sheath Pump On " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="sheath_pump_off_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="sheath_pump_off_label" Content="Sheath Pump Off " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="sheath_pump_auto_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="sheath_pump_auto_label" Content="Sheath Pump Auto " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="sheath_pump_speed_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="sheath_pump_speed_label" Content="Sheath Pump Speed Controlled " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Name="sheath_speed_label" Content="Sheath Speed: " Margin="13, 2, 0, 0"/>
+                                    <Label Name="sheath_speed_slider_value" Content="0" Margin="13, 2, 0, 0"/>
+                                </StackPanel>
+                                <Slider Name="sheath_speed_slider" Minimum="0" Maximum="100" Margin="13, 2, 0, 0" IsEnabled="False" Value="0"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Width="130" Height="20"  Name="send_sheath_speed_button" Content="Send Speed" HorizontalAlignment="Left" Margin="13, 5, 10, 0" IsEnabled="False"/>
+                                    <Ellipse Height="50" Width="50" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </GroupBox>
+
+                        <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Medium" >
+                            <GroupBox.Header>
+                                <Label Content="Waste Pump Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                            </GroupBox.Header>
+
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox Name="enable_waste_pump_changes_button" Content="Enable Waste Pump Changes" Margin="13, 5, 0, 0"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="waste_pump_on_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="waste_pump_on_label" Content="Waste Pump On " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="waste_pump_off_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="waste_pump_off_label" Content="Waste Pump Off " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="waste_pump_auto_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="waste_pump_auto_label" Content="Waste Pump Auto " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Height="14" Width="14" Name="waste_pump_speed_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
+                                    <Label Name="waste_pump_speed_label" Content="Waste Pump Speed Controlled " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Name="waste_speed_label" Content="Waste Speed: " Margin="13, 2, 0, 0"/>
+                                    <Label Name="waste_speed_slider_value" Content="0" Margin="13, 2, 0, 0"/>
+                                </StackPanel>
+                                <Slider Name="waste_speed_slider" Minimum="0" Maximum="100" Margin="13, 2, 0, 0" IsEnabled="False" Value="0"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Width="130" Height="20"  Name="send_waste_speed_button" Content="Send Speed" HorizontalAlignment="Left" Margin="13, 5, 10, 0" IsEnabled="False"/>
+                                    <Ellipse Height="50" Width="50" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                    
+                    
                 </Grid>
-
             </TabItem>
 
 
