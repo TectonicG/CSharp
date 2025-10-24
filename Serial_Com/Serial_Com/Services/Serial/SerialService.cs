@@ -47,7 +47,7 @@ namespace Serial_Com.Services.Serial
         /*
          * Connects to a serial port Async
          */
-        public async Task ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken)
+        public async Task<bool> ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken)
         {
             if (IsConnected)
             {
@@ -65,6 +65,12 @@ namespace Serial_Com.Services.Serial
 
             //Open the serial port
             await Task.Run(() => _port.Open());
+
+            if (!IsConnected)
+            {
+                return false;
+            }
+
             ConnectionChanged?.Invoke(this, true);
 
             //Start background read loop
@@ -75,6 +81,9 @@ namespace Serial_Com.Services.Serial
             //Task.Run schedules ReadLoopAsync on a thread pool so it doesn't block the UI thread
             //We pass the cancelation token here so that it can check to see if it needs to terminate
             _readLoop = Task.Run(() => ReadLoopAsync());
+                
+            return true;
+
         }
 
 

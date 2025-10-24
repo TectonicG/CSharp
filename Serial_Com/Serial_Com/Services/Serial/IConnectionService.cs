@@ -15,7 +15,7 @@ namespace Serial_Com.Services.Serial
         public event EventHandler<ReadOnlyMemory<byte>>? DataReceived;
         public event EventHandler<bool>? ConnectionChanged;
 
-        Task ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken);
+        Task<bool> ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken);
         Task DisconnectAsync();
 
         ValueTask WriteAsync(ReadOnlyMemory<byte> data);

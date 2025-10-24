@@ -22,6 +22,7 @@
 	<Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\controller.proto" GrpcServices="None" AdditionalImportDirs="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator" />
 	<Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\schema.proto" GrpcServices="None" AdditionalImportDirs="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator" />
 	<Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\fluidics.proto" GrpcServices="None" AdditionalImportDirs="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator" />
+	  <Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\display.proto" GrpcServices="None"/>
   </ItemGroup>
 
 </Project>

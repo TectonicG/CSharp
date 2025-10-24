@@ -6,7 +6,148 @@
         xmlns:local="clr-namespace:Serial_Com"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
 
-    </Grid>
+    <GroupBox>
+        <GroupBox.Header>
+            <Label Content="Fluidics Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+        </GroupBox.Header>
+
+        <TabControl Name="fluidicsTabControl" TabStripPlacement="Top" Margin="10" Height="Auto">
+            <TabItem Name="SerialControls" Header="Serial" FontWeight="Bold">
+                <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+                    <GroupBox.Header>
+                        <Label Content="Serial Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                    </GroupBox.Header>
+                    <Grid>
+
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" x:Name="com_port_label" Content="Com Port: " Margin="10" MinHeight="20" MinWidth="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" x:Name="com_port_box" Height="20" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" DropDownOpened="ComPortComboBoxOpen"/>
+                        <Button Grid.Row="1" Grid.Column="0" x:Name="connect_button" Height="30" Width="100" Margin="10" Content="Connect" Click="ConnectButtonClicked" HorizontalAlignment="Left"/>
+
+                    </Grid>
+                </GroupBox>
+            </TabItem>
+
+
+            <TabItem Name="fluidicsControls" Header="Controls" FontWeight="Bold">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"/>
+                        <RowDefinition  Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Grid.Row ="0" Grid.Column="0" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <GroupBox.Header>
+                            <Label Content="Valve Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                        </GroupBox.Header>
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <CheckBox Grid.Row="0" Grid.Column="0" Content = "Enable Valve Control" FontWeight="Medium" Margin="13,5,107,5" Grid.ColumnSpan="2"/>
+
+                            <Button Grid.Row="1" Grid.Column="0" x:Name="valve_one_button" Height="30" Width="100" IsEnabled="False" Tag="1" Background="Red" Margin="10" Content="Enable Valve 1" Click="ToggleValve"/>
+                            <Button Grid.Row="2" Grid.Column="0" x:Name="valve_two_button" Height="30" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
+                            <Button Grid.Row="3" Grid.Column="0" x:Name="valve_three_button" Height="30" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
+                            <Button Grid.Row="4" Grid.Column="0" x:Name="valve_four_button" Height="30" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
+                            <Button Grid.Row="5" Grid.Column="0" x:Name="valve_five_button" Height="30" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
+
+                            <Button Grid.Row="1" Grid.Column="1" x:Name="valve_six_button" Height="30" Width="100" IsEnabled="False" Tag="6" Background="Red" Margin="10" Content="Enable Valve 6" Click="ToggleValve"/>
+                            <Button Grid.Row="2" Grid.Column="1" x:Name="valve_seven_button" Height="30" Width="100" IsEnabled="False" Tag="7" Background="Red" Margin="10" Content="Enable Valve 7" Click="ToggleValve"/>
+                            <Button Grid.Row="3" Grid.Column="1" x:Name="valve_eight_button" Height="30" Width="100" IsEnabled="False" Tag="8" Background="Red" Margin="10" Content="Enable Valve 8" Click="ToggleValve"/>
+                            <Button Grid.Row="4" Grid.Column="1" x:Name="valve_nine_button" Height="30" Width="100" IsEnabled="False" Tag="9" Background="Red" Margin="10" Content="Enable Valve 9" Click="ToggleValve"/>
+                            <Button Grid.Row="5" Grid.Column="1" x:Name="valve_ten_button" Height="30" Width="100" IsEnabled="False" Tag="10" Background="Red" Margin="10" Content="Enable Valve 10" Click="ToggleValve"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row ="0" Grid.Column="1" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <GroupBox.Header>
+                            <Label Content="Pinch Valve Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                        </GroupBox.Header>
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                                <RowDefinition  Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Button Grid.Row="0" Grid.Column="0" x:Name="home_pinch_valve"  Height="30" Width="130" IsEnabled="False" Margin="10" Content="Home Pinch Valve"/>
+                            <TextBox Grid.Row="1" Name="pinch_valve_step_count_box" ></TextBox>
+                            <Button Grid.Row="2" Grid.Column="0" x:Name="valve_to_button" Height="30" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
+                            <Button Grid.Row="3" Grid.Column="0" x:Name="valve_hree_button" Height="30" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
+                            <Button Grid.Row="4" Grid.Column="0" x:Name="valvefour_button" Height="30" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
+                            <Button Grid.Row="5" Grid.Column="0" x:Name="valv_five_button" Height="30" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+
+            </TabItem>
+
+
+
+
+
+
+
+
+
+            <Button Grid.Row="6" Grid.Column="0" x:Name="query_flow_button" Height="30" Width="150" IsEnabled="False" Margin="10" Content="Query Flow" Click="QueryFlow"/>
+
+
+
+        </TabControl>
+    </GroupBox>
 </Window>
