@@ -10,7 +10,7 @@ namespace Serial_Com.Services.Serial
     //This enforces a shape and behavior of a class.
     public interface IConnectionService
     {
-        bool IsConnected { get; }
+        bool? IsConnected { get; }
         string? Endpoint { get; } //Com port & baud rate
         public event EventHandler<ReadOnlyMemory<byte>>? DataReceived;
         public event EventHandler<bool>? ConnectionChanged;

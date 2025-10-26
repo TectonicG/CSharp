@@ -200,10 +200,10 @@
                                     <Label Name="sheath_speed_label" Content="Sheath Speed: " Margin="13, 2, 0, 0"/>
                                     <Label Name="sheath_speed_slider_value" Content="0" Margin="13, 2, 0, 0"/>
                                 </StackPanel>
-                                <Slider Name="sheath_speed_slider" Minimum="0" Maximum="100" Margin="13, 2, 0, 0" IsEnabled="False" Value="0"/>
+                                <Slider Name="sheath_speed_slider" Minimum="0" Maximum="100" Margin="13, 2, 0, 0" IsEnabled="False" Value="0" ValueChanged="PumpSliderChanged" Tag="sheath_slider" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Width="130" Height="20"  Name="send_sheath_speed_button" Content="Send Speed" HorizontalAlignment="Left" Margin="13, 5, 10, 0" IsEnabled="False"/>
-                                    <Ellipse Height="50" Width="50" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <Ellipse Height="50" Width="50" Name="sheath_speed_indicator" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                 </StackPanel>
 
                             </StackPanel>
@@ -240,10 +240,10 @@
                                     <Label Name="waste_speed_label" Content="Waste Speed: " Margin="13, 2, 0, 0"/>
                                     <Label Name="waste_speed_slider_value" Content="0" Margin="13, 2, 0, 0"/>
                                 </StackPanel>
-                                <Slider Name="waste_speed_slider" Minimum="0" Maximum="100" Margin="13, 2, 0, 0" IsEnabled="False" Value="0"/>
+                                <Slider Name="waste_speed_slider" Minimum="0" Maximum="100" Margin="13, 2, 0, 0" IsEnabled="False" Value="0" ValueChanged="PumpSliderChanged" Tag="waste_slider" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Width="130" Height="20"  Name="send_waste_speed_button" Content="Send Speed" HorizontalAlignment="Left" Margin="13, 5, 10, 0" IsEnabled="False"/>
-                                    <Ellipse Height="50" Width="50" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <Ellipse Height="50" Width="50" Name="waste_speed_indicator" Fill="Red" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                 </StackPanel>
 
                             </StackPanel>

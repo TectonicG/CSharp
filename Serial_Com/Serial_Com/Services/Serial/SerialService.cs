@@ -36,7 +36,7 @@ namespace Serial_Com.Services.Serial
 
         private SerialPort? _port;
         private CancellationTokenSource? _ctsForReadLoop;
-        public bool IsConnected => _port?.IsOpen ?? false;
+        public bool? IsConnected => _port?.IsOpen == true;
         public string? Endpoint => _port is null ? null : $"{_port.PortName} @ {_port.BaudRate}";
         public event EventHandler<ReadOnlyMemory<byte>>? DataReceived;
         public event EventHandler<bool>? ConnectionChanged;
@@ -49,7 +49,7 @@ namespace Serial_Com.Services.Serial
          */
         public async Task<bool> ConnectAsync(string portName, int baud, string endline, int timeout, CancellationToken cancellationToken)
         {
-            if (IsConnected)
+            if (IsConnected == true)
             {
                 await DisconnectAsync();
             }
@@ -66,7 +66,7 @@ namespace Serial_Com.Services.Serial
             //Open the serial port
             await Task.Run(() => _port.Open());
 
-            if (!IsConnected)
+            if (!IsConnected == true)
             {
                 return false;
             }
@@ -95,7 +95,7 @@ namespace Serial_Com.Services.Serial
             //Cancel out of read loop
             _ctsForReadLoop?.Cancel();
 
-            if (IsConnected)
+            if (IsConnected == true)
             {
                 try
                 {
@@ -147,7 +147,7 @@ namespace Serial_Com.Services.Serial
             {
                 try
                 {
-                    if (IsConnected)
+                    if (IsConnected == true)
                     {
                         _port.Close();
                     }
@@ -171,7 +171,7 @@ namespace Serial_Com.Services.Serial
 
             var buf = new byte[4096];
 
-            while (!_cancellationToken.IsCancellationRequested && IsConnected)
+            while (!_cancellationToken.IsCancellationRequested && IsConnected == true)
             {
 
                 try
@@ -220,7 +220,7 @@ namespace Serial_Com.Services.Serial
             {
                 return ValueTask.CompletedTask;
             }
-            if(!IsConnected || _port == null)
+            if(IsConnected == false || _port == null)
             {
                 throw new InvalidOperationException("Port not open");
             }

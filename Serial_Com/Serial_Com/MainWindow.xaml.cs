@@ -32,7 +32,6 @@ namespace Serial_Com
         //Backend class
         private readonly Backend backend;
         private CancellationTokenSource _cancelBackend = new CancellationTokenSource();
-        private CancellationTokenSource _cancelSerial = new CancellationTokenSource();
 
         public MainWindow()
         {
@@ -40,7 +39,7 @@ namespace Serial_Com
             InitializeComponent();
 
             //Start the backend
-            backend = new Backend(_cancelBackend.Token, _cancelSerial.Token);
+            backend = new Backend(_cancelBackend.Token);
             _ = backend.RunAsync();
             _ = PumpBackendEventsToUIAsync(_cancelBackend.Token);
 
@@ -61,24 +60,13 @@ namespace Serial_Com
                             //Adjust things based on serial connection
                             case ConnectionChanged(var isConnected):
                                 connect_button.Content = isConnected ? "Disconnect" : "Connect";
-                                //If the serial connection has been closed, cancel the things that go along with that
-                                if (!isConnected)
-                                {
-                                    _cancelSerial.Cancel();
-                                    _cancelSerial.Dispose();
-                                }
-                                com_port_box.IsEnabled = !isConnected;
-                                query_flow_button.IsEnabled = isConnected;
-                                valve_one_button.IsEnabled = isConnected;
-                                valve_two_button.IsEnabled = isConnected;
-                                valve_three_button.IsEnabled = isConnected;
-                                valve_four_button.IsEnabled = isConnected;
-                                valve_five_button.IsEnabled = isConnected;
-                                valve_six_button.IsEnabled = isConnected;
-                                valve_seven_button.IsEnabled = isConnected;
-                                valve_eight_button.IsEnabled = isConnected;
-                                valve_nine_button.IsEnabled = isConnected;
-                                valve_ten_button.IsEnabled = isConnected;                                
+                                //Set the state of all of the buttons used 
+                                SetComPortEnabled(isConnected);
+                                SetValveButtonsEnable(isConnected);
+                                SetPropValveEnabled(isConnected);
+                                SetPinchValveEnabled(isConnected);
+                                SetSheathPumpEnabled(isConnected);
+                                SetWastePumpEnabled(isConnected);
                                 break;
 
                             case DeviceMessageIn(var msg):
@@ -160,11 +148,10 @@ namespace Serial_Com
         private async void ConnectButtonClicked(object? sender, RoutedEventArgs e)
         {
             //If we are not connected, connect
-            if (!backend.IsConnected)
+            if (backend.IsConnected == false)
             {
                 string port = (string)com_port_box.SelectedItem;
                 //Make a new token when trying to comment
-                _cancelSerial = new CancellationTokenSource();
                 bool ok = await backend.ConnectAsync(port);
             }
             else
@@ -172,6 +159,99 @@ namespace Serial_Com
                 //Else disconnect
                 await backend.DisconnectAsync();
             }
+        }
+
+        //To set all of the valves enabled or disabled
+        private void SetValveButtonsEnable(bool enabled)
+        {
+            valve_one_button.IsEnabled = enabled;
+            valve_two_button.IsEnabled = enabled;
+            valve_three_button.IsEnabled = enabled;
+            valve_four_button.IsEnabled = enabled;
+            valve_five_button.IsEnabled = enabled;
+            valve_six_button.IsEnabled = enabled;
+            valve_seven_button.IsEnabled = enabled;
+            valve_eight_button.IsEnabled = enabled;
+            valve_nine_button.IsEnabled = enabled;
+            valve_ten_button.IsEnabled = enabled;
+        }
+
+        //To set the drop down enabled or disabled
+        private void SetComPortEnabled(bool enabled)
+        {
+            com_port_box.IsEnabled = !enabled;
+        }
+
+        private void SetPropValveEnabled(bool enabled)
+        {
+            home_prop_valve_button.IsEnabled = enabled;
+            prop_valve_take_steps_button.IsEnabled = enabled;
+            disable_prop_valve_button.IsEnabled = enabled;
+            prop_valve_step_count.Content = "0";
+        }
+
+        private void SetPinchValveEnabled(bool enabled)
+        {
+            home_pinch_valve_button.IsEnabled = enabled;
+            pinch_valve_take_steps_button.IsEnabled = enabled;
+            disable_pinch_valve_button.IsEnabled = enabled;
+            pinch_valve_step_count.Content = "0";
+        }
+
+        private void SetSheathPumpEnabled(bool enabled)
+        {
+            sheath_pump_on_button.IsEnabled = enabled;
+            sheath_pump_off_button.IsEnabled = enabled;
+            sheath_pump_auto_button.IsEnabled = enabled;
+            sheath_pump_speed_button.IsEnabled = enabled;
+            send_sheath_speed_button.IsEnabled = enabled;
+            sheath_speed_slider.IsEnabled = enabled;
+            if (!enabled)
+            {
+                sheath_speed_slider.Value = 0;
+                sheath_speed_slider_value.Content = "0";
+                sheath_speed_indicator.Fill = Brushes.Red;
+            }
+        }
+        private void SetWastePumpEnabled(bool enabled)
+        {
+            waste_pump_on_button.IsEnabled = enabled;
+            waste_pump_off_button.IsEnabled = enabled;
+            waste_pump_auto_button.IsEnabled = enabled;
+            waste_pump_speed_button.IsEnabled = enabled;
+            send_waste_speed_button.IsEnabled = enabled;
+            waste_speed_slider.IsEnabled = enabled;
+            if (!enabled)
+            {
+                waste_speed_slider.Value = 0;
+                waste_speed_slider_value.Content = "0";
+                waste_speed_indicator.Fill = Brushes.Red;
+            }
+        }
+
+        private void PumpSliderChanged(object? sender, RoutedEventArgs e)
+        {
+            //Check that the object is a slider and that the tag value is not null
+            if(!(sender is Slider {Tag : string sldrType} sldr && !string.IsNullOrEmpty(sldrType.ToString())))
+            {
+                return; 
+            }
+
+            string type = sldrType.ToString();
+            int sliderValue = Int32.Parse(sldr.Value.ToString());
+
+            switch (type)
+            {
+                case "waste_slider":
+                    waste_speed_slider_value.Content = sliderValue;
+                    break;
+                case "sheath_slider":
+                    sheath_speed_slider_value.Content = sliderValue;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
         }
 
     }

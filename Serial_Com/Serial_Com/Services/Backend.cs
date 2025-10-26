@@ -1,14 +1,15 @@
 ﻿using Google.Protobuf;
+using Serial_Com.InternalMessages;
 using Serial_Com.Services.Serial;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Serial_Com.InternalMessages;
 
 namespace Serial_Com.Services.Backend
 {
@@ -20,10 +21,10 @@ namespace Serial_Com.Services.Backend
         private readonly Channel<BackendEvent> _events = Channel.CreateUnbounded<BackendEvent>();
         public ChannelReader<BackendEvent> Events => _events.Reader;
         //Backend controls the serial data
-        private SerialReaderWriter _serialControl;
+        private SerialReaderWriter? _serialControl;
         private readonly Channel<HostMessage> _outgoingSerial = Channel.CreateUnbounded<HostMessage>();
         private readonly Channel<DeviceMessage> _incomingSerial = Channel.CreateUnbounded<DeviceMessage>();
-        private readonly CancellationToken _cancelSerial;
+        private CancellationTokenSource? _cancelSerial;
         private readonly CancellationToken _cancelBackend;
 
         //UI uses these helpers (they wrap command posting + awaiting the reply TCS)
@@ -31,16 +32,14 @@ namespace Serial_Com.Services.Backend
         public Task<bool> DisconnectAsync() => PostAndWait(new DisconnectSerial(NewReply()));
         public Task<bool> SendHostAsync(HostMessage hstMsg) => PostAndWait(new SendHostCommand(hstMsg, NewReply()));
 
-        public bool IsConnected => _serialControl.IsConnected;
-        private static TaskCompletionSource<bool> NewReply() =>new(TaskCreationOptions.RunContinuationsAsynchronously);
+        public bool IsConnected => _serialControl?.IsConnected ?? false;
+        private static TaskCompletionSource<bool> NewReply() => new(TaskCreationOptions.RunContinuationsAsynchronously);
 
 
 
-        public Backend(CancellationToken cancelBackend, CancellationToken cancelSerial)
+        public Backend(CancellationToken cancelBackend)
         {
-            _serialControl = new SerialReaderWriter(cancelSerial, _outgoingSerial, _incomingSerial);
             _cancelBackend = cancelBackend;
-            _cancelSerial = cancelSerial;
 
         }
 
@@ -54,7 +53,7 @@ namespace Serial_Com.Services.Backend
                 _ => throw new NotImplementedException()
             };
 
-            await _cmds.Writer.WriteAsync(cmd, _cancelSerial);
+            await _cmds.Writer.WriteAsync(cmd, _cancelBackend);
             return await reply.Task;
         }
 
@@ -69,19 +68,54 @@ namespace Serial_Com.Services.Backend
                         switch (cmd)
                         {
                             case ConnectSerial(var port, var reply):
-                                var ok = await _serialControl.ConnectToPort(port);
-                                reply.TrySetResult(ok);
+                                //If we try and connect when we are already connected
+                                if (_serialControl?.IsConnected == true)
+                                {
+                                    reply.TrySetResult(true);
+                                    break;
+                                }
+
+                                _cancelSerial?.Cancel();
+                                _cancelSerial?.Dispose();
+                                _cancelSerial = new CancellationTokenSource();
+
+                                var serialReaderWriter = new SerialReaderWriter(_cancelSerial.Token, _outgoingSerial, _incomingSerial);
+                                serialReaderWriter.ConnectionChanged += OnConnectionChanged;
+
+
+                                var ok = await serialReaderWriter.ConnectToPort(port);
                                 if (ok)
                                 {
-                                    _ = _serialControl.StartSerialWriter();
+                                    //Assign internal reference
+                                    _serialControl = serialReaderWriter;
+                                    _ = serialReaderWriter.StartSerialWriter();
                                 }
-                                await _events.Writer.WriteAsync(new ConnectionChanged(ok), _cancelSerial);
+                                else
+                                {
+                                    //Clean up after failed attempt
+                                    _cancelSerial.Cancel();
+                                    _cancelSerial.Dispose();
+                                    _cancelSerial = null;
+                                }
+
+                                reply.TrySetResult(ok);
                                 break;
 
                             case DisconnectSerial(var reply):
-                                await _serialControl.DisconnectFromPort();
+                                var sc = _serialControl;           // capture
+                                _serialControl = null;             // clear early (prevents reentrancy races)
+
+                                if (sc is not null)
+                                {
+                                    await sc.DisconnectFromPort(); // may raise ConnectionChanged(false)
+                                    sc.ConnectionChanged -= OnConnectionChanged;
+                                }
+
+                                _cancelSerial?.Cancel();
+                                _cancelSerial?.Dispose();
+                                _cancelSerial = null;
+
                                 reply.TrySetResult(true);
-                                await _events.Writer.WriteAsync(new ConnectionChanged(false), _cancelSerial);
                                 break;
 
                             case SendHostCommand(HostMessage msg, var reply):
@@ -107,27 +141,23 @@ namespace Serial_Com.Services.Backend
 
         }
 
-        //Backend should run serial reader and writer. 
-        //Each should be it's own task so they happen independently 
+        private async void OnConnectionChanged(object? sender, bool connectionState)
+        {
 
-        //private async Task RunSerialWriter()
-        //{
-        //    while (true)
-        //    {
+            try
+            {
+                await _events.Writer.WriteAsync(new ConnectionChanged(connectionState), _cancelBackend);
 
-        //        while (serialWriteChannel.Reader.TryRead(out var msg)){
-        //            Task.Run(() =>
-        //            {
-        //                await serial.WriteCommand(msg);
-        //            });
-        //        }
-        //    }
-        //}
-
-        //private void RunSerialReader()
-        //{
-
-        //}
+                if (connectionState == false)
+                {
+                    _cancelSerial?.Cancel();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine($"Issue in OnConnectionChange in backend: {ex.Message}");
+            }
+        }
 
     }
 }
