@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace Serial_Com.InternalMessages
-{
-    //UI ---> Backend
-    public abstract record BackendCommand;
-    public record ConnectSerial(string port, TaskCompletionSource<bool> Reply) : BackendCommand;
-    public record DisconnectSerial(TaskCompletionSource<bool> Reply) : BackendCommand;
-    public record SendHostCommand(HostMessage msg, TaskCompletionSource<bool> Reply) : BackendCommand;
+//namespace Serial_Com.Services
+//{
+//    //UI ---> Fluidics
+//    public abstract record FluidicsCommand;
+//    public record ConnectSerial(string port, TaskCompletionSource<bool> Reply) : FluidicsCommand;
+//    public record DisconnectSerial(TaskCompletionSource<bool> Reply) : FluidicsCommand;
 
-    //Backend ---> UI
-    public abstract record BackendEvent;
-    public record ConnectionChanged(bool IsConnected) : BackendEvent;
-    public record DeviceMessageIn(DeviceMessage msg) : BackendEvent;
-    public record BackendError(string Where, string Message) : BackendEvent;
-
-}
+//    //Fluidics ---> UI
+//    public abstract record FluidicsEvent;
+//    public record ConnectionChanged(bool IsConnected) : FluidicsEvent;
+//    public record FluidicsMessageIn(DeviceMessage msg) : FluidicsEvent;
+//    public record FluidicsError(string Where, string Message) : FluidicsEvent;
+//}

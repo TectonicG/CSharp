@@ -1,6 +1,6 @@
 ﻿using Google.Protobuf;
-using Serial_Com.InternalMessages;
-using Serial_Com.Services.Backend;
+using Serial_Com.Services;
+using Serial_Com.Services.Devices;
 using Serial_Com.Services.Serial;
 using System;
 using System.Data;
@@ -31,7 +31,8 @@ namespace Serial_Com
     {
 
         //Backend class
-        private readonly Backend backend;
+        //private readonly Backend backend;
+        private readonly Fluidics fluidics;
         private CancellationTokenSource _cancelBackend = new CancellationTokenSource();
 
         public MainWindow()
@@ -40,56 +41,55 @@ namespace Serial_Com
             InitializeComponent();
 
             //Start the backend
-            backend = new Backend(_cancelBackend.Token);
-            _ = backend.RunAsync();
-            _ = PumpBackendEventsToUIAsync(_cancelBackend.Token);
+            fluidics = new Fluidics();
+            fluidics.ConnectionChanged += OnFluidicsConnectionChanged;
 
         }
 
-        private async Task PumpBackendEventsToUIAsync(CancellationToken ct)
-        {
-            var reader = backend.Events;
-            while (await reader.WaitToReadAsync(ct))
-            {
-                while (reader.TryRead(out var ev))
-                {
-                    await Dispatcher.InvokeAsync(() =>
-                    {
+        //private async Task PumpBackendEventsToUIAsync(CancellationToken ct)
+        //{
+        //    var reader = backend.Events;
+        //    while (await reader.WaitToReadAsync(ct))
+        //    {
+        //        while (reader.TryRead(out var ev))
+        //        {
+        //            await Dispatcher.InvokeAsync(() =>
+        //            {
 
-                        switch (ev)
-                        {
-                            //Adjust things based on serial connection
-                            case ConnectionChanged(var isConnected):
-                                connect_button.Content = isConnected ? "Disconnect" : "Connect";
-                                //Set the state of all of the buttons used 
-                                SetComPortEnabled(isConnected);
-                                //SetValveButtonsEnable(isConnected);
-                                SetPropValveEnabled(isConnected);
-                                SetPinchValveEnabled(isConnected);
-                                //SetSheathPumpEnabled(isConnected);
-                                //SetWastePumpEnabled(isConnected);
-                                break;
+        //                switch (ev)
+        //                {
+        //                    //Adjust things based on serial connection
+        //                    case ConnectionChanged(var isConnected):
+        //                        connect_button.Content = isConnected ? "Disconnect" : "Connect";
+        //                        //Set the state of all of the buttons used 
+        //                        SetComPortEnabled(isConnected);
+        //                        //SetValveButtonsEnable(isConnected);
+        //                        SetPropValveEnabled(isConnected);
+        //                        SetPinchValveEnabled(isConnected);
+        //                        //SetSheathPumpEnabled(isConnected);
+        //                        //SetWastePumpEnabled(isConnected);
+        //                        break;
 
-                            case DeviceMessageIn(var msg):
-                                //Debug.WriteLine("This was the message in UI:");
-                                //Debug.WriteLine(msg);
-                                ParseIncomingData(msg);
-                                break;
+        //                    case DeviceMessageIn(var msg):
+        //                        //Debug.WriteLine("This was the message in UI:");
+        //                        //Debug.WriteLine(msg);
+        //                        ParseIncomingData(msg);
+        //                        break;
 
-                            case BackendError(var where, var msg):
-                                Debug.WriteLine($"There was a backend error here: {where}, with a message {msg}");
-                                break;
+        //                    case BackendError(var where, var msg):
+        //                        Debug.WriteLine($"There was a backend error here: {where}, with a message {msg}");
+        //                        break;
 
-                        }
+        //                }
 
-                    });
-                }
-            }
-        }
+        //            });
+        //        }
+        //    }
+        //}
 
         private void ParseIncomingData(DeviceMessage msg)
         {
-            if(msg.Sender == Sender.Fluidics && msg != null)
+            if (msg.Sender == Sender.Fluidics && msg != null)
             {
                 if (msg.Ack.ErrorCode != ErrorCode.Ok)
                 {
@@ -106,7 +106,7 @@ namespace Serial_Com
                 }
                 else
                 {
-                    
+
                 }
             }
 
@@ -126,27 +126,6 @@ namespace Serial_Com
         {
             Debug.WriteLine($"Error Code: {error}");
         }
-        private async void QueryFlow(object? sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btn)
-            {
-                return;
-            }
-
-            HostMessage hstMsg = new HostMessage
-            {
-                FluidicsCommand = new FluidicsCommand
-                {
-                    QuerySystem = new QuerySystem
-                    {
-                        RequestData = 1
-                    }
-                }
-            };
-
-            await backend.SendHostAsync(hstMsg);
-        }
-
 
         private async void ToggleValve(object? sender, RoutedEventArgs e)
         {
@@ -157,23 +136,12 @@ namespace Serial_Com
                 return;
             }
 
-
             //Set the sent valve state based on the current state of the button
             var valveState = (string)btn.Content == $"Enable Valve {btn.Tag}" ? EnableDisableDef.Enable : EnableDisableDef.Disable;
 
-            HostMessage hstMsg = new HostMessage
-            {
-                FluidicsCommand = new FluidicsCommand
-                {
-                    Valves = new ValveControl
-                    {
-                        ValveNumber = Int32.Parse(btnNum),
-                        ValveState = valveState
-                    }
-                }
-            };
+           var result =  await fluidics.SetValveState(Int32.Parse(btnNum), valveState);
 
-            await backend.SendHostAsync(hstMsg);
+            Debug.WriteLine($"This was the result in the UI for toggle valve: {result}");
         }
 
         private void ComPortComboBoxOpen(object? sender, EventArgs e)
@@ -185,25 +153,31 @@ namespace Serial_Com
 
         }
 
+        private void OnFluidicsConnectionChanged(object? sender, bool connected)
+        {
+            Dispatcher.Invoke(() =>
+                connect_button.Content = connected ? "Disconnect" : "Connect"
+            );
+        }
         private async void ConnectButtonClicked(object? sender, RoutedEventArgs e)
         {
             //If we are not connected, connect
-            if (!backend.IsConnected)
+            if (!fluidics.IsConnected)
             {
                 string port = (string)com_port_box.SelectedItem;
                 //Make a new token when trying to comment
-                bool ok = await backend.ConnectAsync(port);
+                bool ok = await fluidics.ConnectToFluidicsAsync(port);
             }
             else
             {
                 //Else disconnect
-                await backend.DisconnectAsync();
+                await fluidics.DisconnectFluidicsAsync();
             }
         }
 
         private void EnableValveChanges(object? sender, RoutedEventArgs e)
         {
-            if(!(sender is CheckBox {IsChecked : bool ckd } checkBox))
+            if (!(sender is CheckBox { IsChecked: bool ckd } checkBox))
             {
                 return;
             }

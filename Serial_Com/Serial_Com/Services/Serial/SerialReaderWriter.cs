@@ -1,16 +1,18 @@
 ﻿using Google.Protobuf;
 using Serial_Com.Services;
+using Serial_Com.Services.Cobs;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Windows.Documents;
-using Serial_Com.Services.Cobs;
-using System.Threading.Channels;
+using static Serial_Com.Services.Serial.SerialWriter;
 
 namespace Serial_Com.Services.Serial
 {
@@ -25,39 +27,33 @@ namespace Serial_Com.Services.Serial
         public bool IsConnected => _serialHelper.IsConnected;
         public event EventHandler<DeviceMessage>? MessageReceived;
         private readonly CancellationToken _cts;
-
-        public ChannelWriter<DeviceMessage> _incomingSerial;
-        public ChannelReader<HostMessage> _outgoingSerial;
+        private readonly ConcurrentDictionary<uint, TaskCompletionSource<ErrorCode>> _pendingOutgoingMsgs;
+        public ChannelReader<OutgoingOp> _outgoingSerial;
         private readonly SerialReader _reader;
         private readonly SerialWriter _writer;
-        private readonly AckLatch _ackLatch = new AckLatch();
 
 
-        public SerialReaderWriter(CancellationToken cts, ChannelReader<HostMessage> outgoingSerial, ChannelWriter<DeviceMessage> incomingSerial)
+        public SerialReaderWriter(ChannelReader<OutgoingOp> outgoingSerial, ConcurrentDictionary<uint, TaskCompletionSource<ErrorCode>> pendingOutgoingMsgs, CancellationToken cts)
         {
-            _incomingSerial = incomingSerial;
+            _pendingOutgoingMsgs = pendingOutgoingMsgs;
             _outgoingSerial = outgoingSerial;
             _cts = cts;
-            _reader = new SerialReader(_serialHelper, _incomingSerial, _ackLatch, _cts);
-            _writer = new SerialWriter(_serialHelper, _outgoingSerial, _ackLatch, _cts);
+            _reader = new SerialReader(_serialHelper, _cts);
+            _writer = new SerialWriter(_serialHelper, _outgoingSerial, _pendingOutgoingMsgs, _cts);
             //Connects signals for the class
             MakeConnections();
         }
 
-        public async Task<bool> ConnectToPort(string portName)
+        public async Task<bool> ConnectToPortAsync(string portName, int baud, string endline, int timeout)
         {
-            //Setup for communication with the intended devices
-            int baud = 115200;
-            int timeout = 200;
-            string endline = "\0";
             //Just a pass through
             return await _serialHelper.ConnectAsync(portName, baud, endline, timeout, _cts);
 
         }
 
-        public async Task StartSerialWriter()
+        public void StartSerialWriter()
         {
-            await _writer.TaskAsync();
+            _ = _writer.WriterSerial();
         }
 
         public async Task DisconnectFromPort()
@@ -73,12 +69,12 @@ namespace Serial_Com.Services.Serial
             _reader.MessageReceived += OnMessageReceived;
         }
 
-        public void OnConnectionChange(object? sender, bool state)
+        private void OnConnectionChange(object? sender, bool state)
         {
             ConnectionChanged?.Invoke(this, state);
         }
 
-        public void OnMessageReceived(object? sender, DeviceMessage msg)
+        private void OnMessageReceived(object? sender, DeviceMessage msg)
         {
             MessageReceived?.Invoke(this, msg);
         }

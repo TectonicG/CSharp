@@ -58,7 +58,10 @@ namespace Serial_Com.Services.Cobs
         public static byte[] CobsDecode(ReadOnlyMemory<byte> encoded)
         {
             ReadOnlySpan<byte> s = encoded.Span;
-            if (s.Length == 0) return Array.Empty<byte>();
+            if (s.Length == 0)
+            {
+                return Array.Empty<byte>();
+            }
 
             int end = s.Length - 1;                  // last byte must be 0 (frame terminator)
             if (s[end] != 0)
@@ -97,7 +100,10 @@ namespace Serial_Com.Services.Cobs
         public static byte[] CobsDecodeNoTerm(ReadOnlyMemory<byte> encoded)
         {
             var s = encoded.Span;
-            if (s.Length == 0) return Array.Empty<byte>();
+            if (s.Length == 0)
+            {
+                return Array.Empty<byte>();
+            }
 
             var output = new List<byte>(s.Length);
             int i = 0;

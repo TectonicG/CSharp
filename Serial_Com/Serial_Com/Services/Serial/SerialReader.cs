@@ -16,19 +16,15 @@ namespace Serial_Com.Services.Serial
     {
 
         private readonly IConnectionService _serial;
-        private readonly ChannelWriter<DeviceMessage> _incomingSerial;
         private readonly CancellationToken _ct;
         public event EventHandler<DeviceMessage>? MessageReceived;
         private readonly List<byte> _buffer = new();
         private readonly byte[] _delimiter = Encoding.ASCII.GetBytes("\0"); //This is what cobs encoding ends with 
-        private readonly AckLatch _ackLatch;
 
         public TaskCompletionSource<bool>? ackSignal;
-        public SerialReader(IConnectionService serial, ChannelWriter<DeviceMessage> incomingSerial, AckLatch ackLatch, CancellationToken ct)
+        public SerialReader(IConnectionService serial, CancellationToken ct)
         {
             _serial = serial;
-            _ackLatch = ackLatch;
-            _incomingSerial = incomingSerial;
             _ct = ct;
             _serial.DataReceived += OnDataReceived;
         }
@@ -50,15 +46,9 @@ namespace Serial_Com.Services.Serial
                 {
                     var decoded = Cobs.Cobs.CobsDecode(msgBytes);
                     var parsed = DeviceMessage.Parser.ParseFrom(decoded);
-                    var (msgFound, hostMsg) = _ackLatch.TrySignal(parsed.Ack.RefToken);
-                    if (msgFound)
-                    {
-                        MessageReceived?.Invoke(this, parsed, hostMsg);
-                    }
-                    else
-                    {
-                        MessageReceived?.Invoke(this, parsed);
-                    }
+                    //var msgFound = _ackLatch.TrySignal(parsed.Ack.RefToken);
+                    MessageReceived?.Invoke(this, parsed);
+
                     //Look for another delimiter
                     delimIndex = CollectionsMarshal.AsSpan(_buffer).IndexOf(_delimiter);
                 }

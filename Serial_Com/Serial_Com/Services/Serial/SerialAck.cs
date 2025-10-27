@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Serial_Com.Services.Serial
 {
-
     /*
      * This class 
      */
@@ -16,17 +15,15 @@ namespace Serial_Com.Services.Serial
         private readonly object _lock = new object();   //protects the fields below
         private TaskCompletionSource<bool>? _tcs;   //waiter ther writer awaits
         private uint _token;    //token of the current in-flight write
-        private HostMessage _currentMessage = new HostMessage();
 
         //Writer calls this before sending a message over serial to arm the latch for next token
         //Call from serialWriter
-        public Task<bool> Arm(HostMessage hostMsg)
+        public Task<bool> Arm(uint token)
         {
             //Auto unlocks at the end of the lock block
             lock (_lock)
             {
-                _currentMessage = hostMsg;
-                _token = _currentMessage.Token; //This is the token we are waiting for 
+                _token = token; //This is the token we are waiting for 
                 _tcs = new(TaskCreationOptions.RunContinuationsAsynchronously); //Do nothing
                 return (_tcs.Task);//Writer awaits this taks
             }
@@ -35,7 +32,7 @@ namespace Serial_Com.Services.Serial
 
         //Try to signal the writer that the ack came in
         //Call from serialReader
-        public (bool result, HostMessage msg) TrySignal(uint refToken)
+        public bool TrySignal(uint refToken)
         {
             lock (_lock) //Lock the object
             {
@@ -45,9 +42,9 @@ namespace Serial_Com.Services.Serial
                 {
                     _tcs.TrySetResult(true); //Let the writer know the ack came in
                     _tcs = null; //Disarm waiting task
-                    return (true, _currentMessage);
+                    return true;
                 }
-                return (false, _currentMessage); //The ack didn't match or it was already completed
+                return false; //The ack didn't match or it was already completed
             }
         }
 
