@@ -86,7 +86,7 @@
                                 <RowDefinition  Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <CheckBox Grid.Row="0" Grid.Column="0" Content = "Enable Valve Control" FontWeight="Medium" Margin="13,5,107,5" Grid.ColumnSpan="2"/>
+                            <CheckBox Grid.Row="0" Grid.Column="0" Content = "Enable Valve Controls" FontWeight="Medium" Margin="13,5,107,5" Grid.ColumnSpan="2" Click="EnableValveChanges"/>
 
                             <Button Grid.Row="1" Grid.Column="0" Name="valve_one_button" Height="30" Width="100" IsEnabled="False" Tag="1" Background="Red" Margin="10" Content="Enable Valve 1" Click="ToggleValve"/>
                             <Button Grid.Row="2" Grid.Column="0" Name="valve_two_button" Height="30" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
@@ -179,7 +179,7 @@
                             </GroupBox.Header>
 
                             <StackPanel Orientation="Vertical">
-                                <CheckBox Name="enable_sheath_pump_changes_button" Content="Enable Sheath Pump Changes" Margin="13, 5, 0, 0"/>
+                                <CheckBox Name="enable_sheath_pump_changes_button" Content="Enable Sheath Pump Controls" Margin="13, 5, 0, 0" Click="EnableSheathPumpChanges"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Height="14" Width="14" Name="sheath_pump_on_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
                                     <Label Name="sheath_pump_on_label" Content="Sheath Pump On " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -219,7 +219,7 @@
                             </GroupBox.Header>
 
                             <StackPanel Orientation="Vertical">
-                                <CheckBox Name="enable_waste_pump_changes_button" Content="Enable Waste Pump Changes" Margin="13, 5, 0, 0"/>
+                                <CheckBox Name="enable_waste_pump_changes_button" Content="Enable Waste Pump Controls" Margin="13, 5, 0, 0" Click="EnableWastePumpChanges"/>
                                 <StackPanel Orientation="Horizontal">
                                     <Button Height="14" Width="14" Name="waste_pump_on_button" Margin="13, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center" Background="Red" IsEnabled="False"/>
                                     <Label Name="waste_pump_on_label" Content="Waste Pump On " Margin="4, 2, 0, 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>

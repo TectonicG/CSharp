@@ -18,7 +18,7 @@ namespace Serial_Com.Services.Serial
         private readonly IConnectionService _serial;
         private readonly ChannelWriter<DeviceMessage> _incomingSerial;
         private readonly CancellationToken _ct;
-
+        public event EventHandler<DeviceMessage>? MessageReceived;
         private readonly List<byte> _buffer = new();
         private readonly byte[] _delimiter = Encoding.ASCII.GetBytes("\0"); //This is what cobs encoding ends with 
         private readonly AckLatch _ackLatch;
@@ -37,7 +37,7 @@ namespace Serial_Com.Services.Serial
 
             //Look for the delimiter index
             int delimIndex = CollectionsMarshal.AsSpan(_buffer).IndexOf(_delimiter);
-            //If the delim index was not found the retunr value is -1
+            //If the delim index was not found the retun value is -1
             while (delimIndex > 0)
             {
 
@@ -46,17 +46,34 @@ namespace Serial_Com.Services.Serial
                 //Remove that message from the msgbuffer list
                 _buffer.RemoveRange(0, delimIndex + _delimiter.Length);
                 //Decode and parse the incoming device message
-                var decoded = Cobs.Cobs.CobsDecode(msgBytes);
-                var parsed = DeviceMessage.Parser.ParseFrom(decoded);
-                _incomingSerial.TryWrite(parsed);
-                //Look for another delimiter
-                delimIndex = CollectionsMarshal.AsSpan(_buffer).IndexOf(_delimiter);
-                //Pass the ref token to the SerialAck to wakeup the writer if needed
-                _ackLatch.TrySignal(parsed.Ack.RefToken);
-                DeviceMessage parsedData = DeviceMessage.Parser.ParseFrom(decoded);
-                Debug.WriteLine("Data we got in: ");
-                Debug.WriteLine(JsonFormatter.Default.Format(parsedData));
-                //MessageReceived?.Invoke(this, parsedData);
+                try
+                {
+                    var decoded = Cobs.Cobs.CobsDecode(msgBytes);
+                    var parsed = DeviceMessage.Parser.ParseFrom(decoded);
+                    var (msgFound, hostMsg) = _ackLatch.TrySignal(parsed.Ack.RefToken);
+                    if (msgFound)
+                    {
+                        MessageReceived?.Invoke(this, parsed, hostMsg);
+                    }
+                    else
+                    {
+                        MessageReceived?.Invoke(this, parsed);
+                    }
+                    //Look for another delimiter
+                    delimIndex = CollectionsMarshal.AsSpan(_buffer).IndexOf(_delimiter);
+                }
+                catch (FormatException ex)
+                {
+                    Debug.WriteLine($"Format exception: {ex}");
+                }
+                catch (Google.Protobuf.InvalidProtocolBufferException ex)
+                {
+                    Debug.WriteLine($"Invalid Proto: {ex}");
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.WriteLine($"In serial reader: {ex.ToString()}");
+                }
             }
         }
 

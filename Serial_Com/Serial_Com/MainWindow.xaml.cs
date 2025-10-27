@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 
@@ -62,16 +63,17 @@ namespace Serial_Com
                                 connect_button.Content = isConnected ? "Disconnect" : "Connect";
                                 //Set the state of all of the buttons used 
                                 SetComPortEnabled(isConnected);
-                                SetValveButtonsEnable(isConnected);
+                                //SetValveButtonsEnable(isConnected);
                                 SetPropValveEnabled(isConnected);
                                 SetPinchValveEnabled(isConnected);
-                                SetSheathPumpEnabled(isConnected);
-                                SetWastePumpEnabled(isConnected);
+                                //SetSheathPumpEnabled(isConnected);
+                                //SetWastePumpEnabled(isConnected);
                                 break;
 
                             case DeviceMessageIn(var msg):
-                                Debug.WriteLine("This was the message in:");
-                                Debug.WriteLine(msg);
+                                //Debug.WriteLine("This was the message in UI:");
+                                //Debug.WriteLine(msg);
+                                ParseIncomingData(msg);
                                 break;
 
                             case BackendError(var where, var msg):
@@ -83,9 +85,47 @@ namespace Serial_Com
                     });
                 }
             }
+        }
+
+        private void ParseIncomingData(DeviceMessage msg)
+        {
+            if(msg.Sender == Sender.Fluidics && msg != null)
+            {
+                if (msg.Ack.ErrorCode != ErrorCode.Ok)
+                {
+                    ParseErrorCode(msg.Ack.ErrorCode);
+                }
+                else if (msg.Ack.Response != null)
+                {
+                    //Parse QF
+                    ParseQueryFlow(msg.Ack.Response);
+                }
+                else if (msg.Signal != null)
+                {
+                    ParseFluidicsSignals(msg.Signal);
+                }
+                else
+                {
+                    
+                }
+            }
 
         }
 
+        private void ParseQueryFlow(Response response)
+        {
+            Debug.WriteLine($"This is the QF stuff: {response}");
+        }
+
+        private void ParseFluidicsSignals(Signal signal)
+        {
+            Debug.WriteLine($"Signal: {signal}");
+        }
+
+        private void ParseErrorCode(ErrorCode error)
+        {
+            Debug.WriteLine($"Error Code: {error}");
+        }
         private async void QueryFlow(object? sender, RoutedEventArgs e)
         {
             if (sender is not Button btn)
@@ -148,7 +188,7 @@ namespace Serial_Com
         private async void ConnectButtonClicked(object? sender, RoutedEventArgs e)
         {
             //If we are not connected, connect
-            if (backend.IsConnected == false)
+            if (!backend.IsConnected)
             {
                 string port = (string)com_port_box.SelectedItem;
                 //Make a new token when trying to comment
@@ -161,6 +201,15 @@ namespace Serial_Com
             }
         }
 
+        private void EnableValveChanges(object? sender, RoutedEventArgs e)
+        {
+            if(!(sender is CheckBox {IsChecked : bool ckd } checkBox))
+            {
+                return;
+            }
+
+            SetValveButtonsEnable(ckd);
+        }
         //To set all of the valves enabled or disabled
         private void SetValveButtonsEnable(bool enabled)
         {
@@ -198,6 +247,28 @@ namespace Serial_Com
             pinch_valve_step_count.Content = "0";
         }
 
+        private void EnableSheathPumpChanges(object? sender, RoutedEventArgs e)
+        {
+
+            if (!(sender is CheckBox { IsChecked: bool ckd } checkBox))
+            {
+                return;
+            }
+
+            SetSheathPumpEnabled(ckd);
+        }
+
+        private void EnableWastePumpChanges(object? sender, RoutedEventArgs e)
+        {
+
+            if (!(sender is CheckBox { IsChecked: bool ckd } checkBox))
+            {
+                return;
+            }
+
+            SetWastePumpEnabled(ckd);
+        }
+
         private void SetSheathPumpEnabled(bool enabled)
         {
             sheath_pump_on_button.IsEnabled = enabled;
@@ -232,9 +303,9 @@ namespace Serial_Com
         private void PumpSliderChanged(object? sender, RoutedEventArgs e)
         {
             //Check that the object is a slider and that the tag value is not null
-            if(!(sender is Slider {Tag : string sldrType} sldr && !string.IsNullOrEmpty(sldrType.ToString())))
+            if (!(sender is Slider { Tag: string sldrType } sldr && !string.IsNullOrEmpty(sldrType.ToString())))
             {
-                return; 
+                return;
             }
 
             string type = sldrType.ToString();

@@ -10,11 +10,16 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Windows.Interop;
 
 namespace Serial_Com.Services.Backend
 {
     public sealed class Backend
     {
+
+        private Task? _queryFlow;
+
+        public bool IsConnected => _serialControl?.IsConnected ?? false;
 
         //Messages for the UI and Backend
         private readonly Channel<BackendCommand> _cmds = Channel.CreateUnbounded<BackendCommand>();
@@ -32,7 +37,6 @@ namespace Serial_Com.Services.Backend
         public Task<bool> DisconnectAsync() => PostAndWait(new DisconnectSerial(NewReply()));
         public Task<bool> SendHostAsync(HostMessage hstMsg) => PostAndWait(new SendHostCommand(hstMsg, NewReply()));
 
-        public bool IsConnected => _serialControl?.IsConnected ?? false;
         private static TaskCompletionSource<bool> NewReply() => new(TaskCreationOptions.RunContinuationsAsynchronously);
 
 
@@ -81,6 +85,7 @@ namespace Serial_Com.Services.Backend
 
                                 var serialReaderWriter = new SerialReaderWriter(_cancelSerial.Token, _outgoingSerial, _incomingSerial);
                                 serialReaderWriter.ConnectionChanged += OnConnectionChanged;
+                                serialReaderWriter.MessageReceived += ParseIncommingData;
 
 
                                 var ok = await serialReaderWriter.ConnectToPort(port);
@@ -89,6 +94,7 @@ namespace Serial_Com.Services.Backend
                                     //Assign internal reference
                                     _serialControl = serialReaderWriter;
                                     _ = serialReaderWriter.StartSerialWriter();
+                                    StartQueryFlow(_cancelSerial.Token);
                                 }
                                 else
                                 {
@@ -96,6 +102,8 @@ namespace Serial_Com.Services.Backend
                                     _cancelSerial.Cancel();
                                     _cancelSerial.Dispose();
                                     _cancelSerial = null;
+                                    serialReaderWriter.ConnectionChanged -= OnConnectionChanged;
+                                    serialReaderWriter.MessageReceived -= ParseIncommingData;
                                 }
 
                                 reply.TrySetResult(ok);
@@ -109,6 +117,7 @@ namespace Serial_Com.Services.Backend
                                 {
                                     await sc.DisconnectFromPort(); // may raise ConnectionChanged(false)
                                     sc.ConnectionChanged -= OnConnectionChanged;
+                                    sc.MessageReceived -= ParseIncommingData;
                                 }
 
                                 _cancelSerial?.Cancel();
@@ -137,8 +146,63 @@ namespace Serial_Com.Services.Backend
                     }
                 }
             }
+        }
 
+        private void StartQueryFlow(CancellationToken ct)
+        {
+            _queryFlow = QueryFluidicsSystemAsync(ct);
+        }
 
+        private async Task QueryFluidicsSystemAsync(CancellationToken ct)
+        {
+            //Query flow message, just need to make it once
+            HostMessage queryFlowMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    QuerySystem = new QuerySystem
+                    {
+                        RequestData = 1
+                    }
+                }
+            };
+
+            while (!ct.IsCancellationRequested)
+            {
+                if (!_outgoingSerial.Writer.TryWrite(queryFlowMsg))
+                {
+                    await _outgoingSerial.Writer.WriteAsync(queryFlowMsg, ct).ConfigureAwait(false);
+                }
+
+                await Task.Delay(100, ct).ConfigureAwait(false);
+
+            }
+        }
+
+        private async void ParseIncommingData(object? sender, DeviceMessage msg)
+        {
+            if (msg == null) //Message is pretty useless without an ack
+            {
+                return;
+            }
+
+            try
+            {
+                //Send the message to the UI
+                if (!_events.Writer.TryWrite(new DeviceMessageIn(msg)))
+                {
+                    await _events.Writer.WriteAsync(new DeviceMessageIn(msg), _cancelBackend).ConfigureAwait(false);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                ;//It's okay here, we canceled 
+            }
+            catch (System.Exception ex)
+            {
+                Debug.WriteLine($"Error in parsing incming data: {ex}");
+                Debug.WriteLine($"Bad message: {msg}");
+            }
         }
 
         private async void OnConnectionChanged(object? sender, bool connectionState)

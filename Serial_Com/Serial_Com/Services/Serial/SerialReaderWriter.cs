@@ -22,7 +22,7 @@ namespace Serial_Com.Services.Serial
 
         IConnectionService _serialHelper = new SerialService();
         public event EventHandler<bool>? ConnectionChanged;
-        public bool? IsConnected => _serialHelper?.IsConnected;
+        public bool IsConnected => _serialHelper.IsConnected;
         public event EventHandler<DeviceMessage>? MessageReceived;
         private readonly CancellationToken _cts;
 
@@ -70,11 +70,17 @@ namespace Serial_Com.Services.Serial
         private void MakeConnections()
         {
             _serialHelper.ConnectionChanged += OnConnectionChange;
+            _reader.MessageReceived += OnMessageReceived;
         }
 
         public void OnConnectionChange(object? sender, bool state)
         {
             ConnectionChanged?.Invoke(this, state);
+        }
+
+        public void OnMessageReceived(object? sender, DeviceMessage msg)
+        {
+            MessageReceived?.Invoke(this, msg);
         }
     }
 

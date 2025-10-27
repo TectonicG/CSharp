@@ -16,9 +16,8 @@ namespace Serial_Com.Services.Serial
         private readonly IConnectionService _serial;
         private readonly ChannelReader<HostMessage> _outgoingSerial;
         private readonly CancellationToken _ct;
-
-        private uint _tokenCount;
         private readonly AckLatch _ackLatch;
+        private uint _tokenCount;
 
         //Constructor
         public SerialWriter(IConnectionService serial, ChannelReader<HostMessage> outgoingSerial, AckLatch ackLatch, CancellationToken ct)
@@ -36,14 +35,13 @@ namespace Serial_Com.Services.Serial
 
             _tokenCount++;
             //Arm the latch token
-            var (_, ackTask) = _ackLatch.Arm(_tokenCount);
+            var ackTask = _ackLatch.Arm(hostMsg);
             //Need to keep track of the msgs i send so i can look for an ack on it 
             //Just for debug
             Debug.WriteLine("This is the message we are sending: ");
             Debug.WriteLine(JsonFormatter.Default.Format(hostMsg));
             //Set sender and token
             hostMsg.Sender = Sender.Host;
-            //Increment on each send
             hostMsg.Token = _tokenCount;
             //Serialize data with cobs encoding
             var message = Cobs.Cobs.CobsEncode(hostMsg.ToByteArray());
@@ -51,7 +49,14 @@ namespace Serial_Com.Services.Serial
             {
                 //Send & wait on result
                 //Write data. Will throw exception if it cant
-                await _serial.WriteAsync(message).ConfigureAwait(false);
+                try
+                {
+                    await _serial.WriteAsync(message).ConfigureAwait(false);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.WriteLine($"In seiral writer: {ex}");
+                }
                 try
                 {
                     //Wait for ack to come in
@@ -63,6 +68,11 @@ namespace Serial_Com.Services.Serial
                 }
                 catch
                 {
+                    //Bail if the process should cancel
+                    if (_ct.IsCancellationRequested)
+                    {
+                        return false;
+                    }
                     Debug.WriteLine($"Writer timeout {i + 1}/3");
                 }
 
