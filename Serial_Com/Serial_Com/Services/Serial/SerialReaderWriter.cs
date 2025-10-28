@@ -73,7 +73,7 @@ namespace Serial_Com.Services.Serial
                  hstMsg.Token,
                  hstMsg,
                  tcs,
-                 TimeSpan.FromMilliseconds(200)
+                 TimeSpan.FromMilliseconds(200) // could make a parameter
             );
 
             //Queue it to serial writer

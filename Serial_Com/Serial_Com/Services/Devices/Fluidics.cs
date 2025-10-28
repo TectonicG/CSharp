@@ -87,7 +87,7 @@ namespace Serial_Com.Services.Devices
                 return ErrorCode.BadParameter;
             }
 
-            if(_serialControl == null)
+            if (_serialControl == null)
             {
                 return ErrorCode.UnknownError;
             }
@@ -103,6 +103,164 @@ namespace Serial_Com.Services.Devices
                     }
                 }
             };
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> MovePropValve(int steps)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PropValve = new PropValveControl
+                    {
+                        MoveSteps = steps
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> HomePropValve()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PropValve = new PropValveControl
+                    {
+                        SendHome = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> DisablePropValve()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PropValve = new PropValveControl
+                    {
+                        Disable = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+
+        public async Task<ErrorCode> MovePinchValve(int steps)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PinchValve = new PinchValveControl
+                    {
+                        MoveSteps = steps
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+
+        }
+
+        public async Task<ErrorCode> HomePinchValve()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PinchValve = new PinchValveControl
+                    {
+                        SendHome = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> DisablePinchValve()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PinchValve = new PinchValveControl
+                    {
+                        Disable = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> HandlePump(PumpSelection pump, PumpStates state, uint speed)
+        {
+
+            if(speed > 100)
+            {
+                speed = 100;
+            }
+
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PumpControl = new PumpControl
+                    {
+                        PumpSelection = pump,
+                        PumpState = state,
+                        PumpSpeed = (int)speed
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
 
             return await _serialControl.SendAndWaitForResult(hstMsg);
         }
@@ -164,7 +322,7 @@ namespace Serial_Com.Services.Devices
                     Debug.WriteLine($"Error Code was: {dvcMsg.Ack.ErrorCode}");
                 }
 
-                if (dvcMsg.Ack.Response.FluidicsSystemInfo != null)
+                if (dvcMsg.Ack.Response?.FluidicsSystemInfo != null)
                 {
                     OnQueryFlowRecieved?.Invoke(this, dvcMsg.Ack.Response.FluidicsSystemInfo);
                     //Debug.WriteLine($"Response was: {dvcMsg.Ack.Response}");

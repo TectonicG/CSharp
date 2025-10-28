@@ -67,7 +67,14 @@ namespace Serial_Com.Services.Serial
             };
 
             //Open the serial port
-            await Task.Run(() => _port.Open());
+            try
+            {
+                await Task.Run(() => _port.Open());
+            }
+            catch
+            {
+                return false;
+            }
             _internalCts = new CancellationTokenSource();
 
             if (!IsConnected)
