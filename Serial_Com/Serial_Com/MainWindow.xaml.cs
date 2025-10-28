@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
 using Serial_Com.Services;
 using Serial_Com.Services.Devices;
 using Serial_Com.Services.Serial;
@@ -43,90 +44,14 @@ namespace Serial_Com
             //Start the backend
             fluidics = new Fluidics();
             fluidics.ConnectionChanged += OnFluidicsConnectionChanged;
+            fluidics.OnQueryFlowRecieved += ParseQueryFlow;
 
         }
 
-        //private async Task PumpBackendEventsToUIAsync(CancellationToken ct)
-        //{
-        //    var reader = backend.Events;
-        //    while (await reader.WaitToReadAsync(ct))
-        //    {
-        //        while (reader.TryRead(out var ev))
-        //        {
-        //            await Dispatcher.InvokeAsync(() =>
-        //            {
-
-        //                switch (ev)
-        //                {
-        //                    //Adjust things based on serial connection
-        //                    case ConnectionChanged(var isConnected):
-        //                        connect_button.Content = isConnected ? "Disconnect" : "Connect";
-        //                        //Set the state of all of the buttons used 
-        //                        SetComPortEnabled(isConnected);
-        //                        //SetValveButtonsEnable(isConnected);
-        //                        SetPropValveEnabled(isConnected);
-        //                        SetPinchValveEnabled(isConnected);
-        //                        //SetSheathPumpEnabled(isConnected);
-        //                        //SetWastePumpEnabled(isConnected);
-        //                        break;
-
-        //                    case DeviceMessageIn(var msg):
-        //                        //Debug.WriteLine("This was the message in UI:");
-        //                        //Debug.WriteLine(msg);
-        //                        ParseIncomingData(msg);
-        //                        break;
-
-        //                    case BackendError(var where, var msg):
-        //                        Debug.WriteLine($"There was a backend error here: {where}, with a message {msg}");
-        //                        break;
-
-        //                }
-
-        //            });
-        //        }
-        //    }
-        //}
-
-        private void ParseIncomingData(DeviceMessage msg)
+        private void ParseQueryFlow(object? sender, FluidicsSystemInfo info)
         {
-            if (msg.Sender == Sender.Fluidics && msg != null)
-            {
-                if (msg.Ack.ErrorCode != ErrorCode.Ok)
-                {
-                    ParseErrorCode(msg.Ack.ErrorCode);
-                }
-                else if (msg.Ack.Response != null)
-                {
-                    //Parse QF
-                    ParseQueryFlow(msg.Ack.Response);
-                }
-                else if (msg.Signal != null)
-                {
-                    ParseFluidicsSignals(msg.Signal);
-                }
-                else
-                {
-
-                }
-            }
-
+            Debug.WriteLine($"This is QF: {info}");
         }
-
-        private void ParseQueryFlow(Response response)
-        {
-            Debug.WriteLine($"This is the QF stuff: {response}");
-        }
-
-        private void ParseFluidicsSignals(Signal signal)
-        {
-            Debug.WriteLine($"Signal: {signal}");
-        }
-
-        private void ParseErrorCode(ErrorCode error)
-        {
-            Debug.WriteLine($"Error Code: {error}");
-        }
-
         private async void ToggleValve(object? sender, RoutedEventArgs e)
         {
             //Check to see that the sender is a button and that the button number is not empty
@@ -139,7 +64,22 @@ namespace Serial_Com
             //Set the sent valve state based on the current state of the button
             var valveState = (string)btn.Content == $"Enable Valve {btn.Tag}" ? EnableDisableDef.Enable : EnableDisableDef.Disable;
 
-           var result =  await fluidics.SetValveState(Int32.Parse(btnNum), valveState);
+            var result = await fluidics.SetValveState(Int32.Parse(btnNum), valveState);
+
+            //If it wnt through
+            if (result == ErrorCode.Ok)
+            {
+                if(btn.Content.ToString() == $"Enable Valve {btn.Tag}")
+                {
+                    btn.Content = $"Disable Valve {btn.Tag}";
+                    btn.Background = Brushes.Green;
+                }
+                else
+                {
+                    btn.Content = $"Enable Valve {btn.Tag}";
+                    btn.Background = Brushes.Red;
+                }
+            }
 
             Debug.WriteLine($"This was the result in the UI for toggle valve: {result}");
         }

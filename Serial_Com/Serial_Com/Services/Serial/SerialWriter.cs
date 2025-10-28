@@ -32,24 +32,14 @@ namespace Serial_Com.Services.Serial
         //Writing
         public async Task WriteCommandAsync(HostMessage hostMsg)
         {
-            //const uint NUM_TRIES = 1;
-            //const uint TIMEOUT_MS = 200;
 
-            //Arm the latch token
-            //Set sender and token
             hostMsg.Sender = Sender.Host;
-            //var ackTask = _ackLatch.Arm(hostMsg.Token);
-            //Need to keep track of the msgs i send so i can look for an ack on it 
             //Just for debug
             Debug.WriteLine("This is the message we are sending: ");
             Debug.WriteLine(JsonFormatter.Default.Format(hostMsg));
 
             //Serialize data with cobs encoding
             var message = Cobs.Cobs.CobsEncode(hostMsg.ToByteArray());
-            //for (int i = 0; i < NUM_TRIES; i++)
-            //{
-            //Send & wait on result
-            //Write data. Will throw exception if it cant
             try
             {
                 await _serial.WriteAsync(message).ConfigureAwait(false);
@@ -58,27 +48,6 @@ namespace Serial_Com.Services.Serial
             {
                 Debug.WriteLine($"In serial writer: {ex}");
             }
-            //try
-            //{
-            //    //Wait for ack to come in
-            //    if (await ackTask.WaitAsync(TimeSpan.FromMilliseconds(TIMEOUT_MS), _ct).ConfigureAwait(false))
-            //    {
-            //        Debug.WriteLine("Got the ack in - From writer");
-            //        return true;
-            //    }
-            //}
-            //catch
-            //{
-            //    //Bail if the process should cancel
-            //    if (_ct.IsCancellationRequested)
-            //    {
-            //        return false;
-            //    }
-            //    Debug.WriteLine($"Writer timeout {i + 1} of {NUM_TRIES}");
-            //}
-
-            //}
-            //return false;
         }
 
         //This is what will be run on another thread. It waits for data to come in, if it does, it reads it out and that data gets written to serial 
@@ -92,6 +61,7 @@ namespace Serial_Com.Services.Serial
                     {
                         await WriteCommandAsync(msg.Msg);
 
+                        //Start the timeout when the message is sent
                         _ = StartTimeoutAsync(msg, _ct);
                     }
                 }
@@ -100,7 +70,8 @@ namespace Serial_Com.Services.Serial
 
         private async Task StartTimeoutAsync(OutgoingOp msg, CancellationToken ct)
         {
-
+            //Starts the timeout for the message
+            //If the message is not gotten back in time, then the message is removed from the dictionary and the result is set and unknown error
 
             var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
             try

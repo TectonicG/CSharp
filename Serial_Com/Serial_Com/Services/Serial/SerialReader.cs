@@ -46,7 +46,6 @@ namespace Serial_Com.Services.Serial
                 {
                     var decoded = Cobs.Cobs.CobsDecode(msgBytes);
                     var parsed = DeviceMessage.Parser.ParseFrom(decoded);
-                    //var msgFound = _ackLatch.TrySignal(parsed.Ack.RefToken);
                     MessageReceived?.Invoke(this, parsed);
 
                     //Look for another delimiter
