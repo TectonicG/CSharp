@@ -738,6 +738,12 @@
                         <Button x:Name="sampleRateAutoScaleButton" Content="Reset Scale" Margin="50,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
                         <CheckBox Grid.Row="2" Grid.Column="0" x:Name="sampleRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="50,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
                     </StackPanel>
+
+                    <ScottPlot:WpfPlot Grid.Row="3" Grid.Column="1" Name="vacuumLevelPlot"/>
+                    <StackPanel Grid.Row="2" Grid.Column="1"  Orientation="Horizontal">
+                        <Button x:Name="vacuumAutoScaleButton" Content="Reset Scale" Margin="50,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                        <CheckBox Grid.Row="2" Grid.Column="0" x:Name="vacuumPlotAutoScroll" Content="Auto Scroll X-Axis" Margin="50,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    </StackPanel>
                 </Grid>
             </TabItem>
 

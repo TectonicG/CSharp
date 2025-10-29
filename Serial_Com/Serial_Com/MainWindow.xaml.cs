@@ -45,11 +45,12 @@ namespace Serial_Com
         private readonly List<double> _sheath = new();
         private readonly List<double> _sampleVel = new();
         private readonly List<double> _sampleRate = new();
+        private readonly List<double> _vacuumLevel = new();
         private readonly Dictionary<Plot, (double, double)> graphYAxisLimits = new Dictionary<Plot, (double, double)>();
 
 
         private readonly DispatcherTimer _frameTimer = new() { Interval = TimeSpan.FromMilliseconds(33) }; // ~30 FPS
-        private const int MaxPoints = 1000; // your sliding window
+        private const int MaxPoints = 10000; // your sliding window
 
         private Random _rndm = new Random();
         public MainWindow()
@@ -61,6 +62,7 @@ namespace Serial_Com
             graphYAxisLimits.Add(sheathRatePlot.Plot, (-5.5, 5.5));
             graphYAxisLimits.Add(sampleVelocityPlot.Plot, (-3666, 3666));
             graphYAxisLimits.Add(sampleRatePlot.Plot, (-120.0, 120.0));
+            graphYAxisLimits.Add(vacuumLevelPlot.Plot, (-5.5, 1));
 
 
             //Start the backend
@@ -118,6 +120,21 @@ namespace Serial_Com
             sampleRatePlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
             sampleRatePlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
 
+            //Sample Rate Plot
+            var p4 = vacuumLevelPlot.Plot.Add.Scatter(_xs, _vacuumLevel);
+            p4.MarkerShape = MarkerShape.None;
+            p4.LineColor = ScottPlot.Colors.Black;
+            p4.LineWidth = 2;
+            graphYAxisLimits.TryGetValue(vacuumLevelPlot.Plot, out var vacYLimits);
+            var (vacMinY, vacMaxY) = vacYLimits;
+            vacuumLevelPlot.Plot.Axes.SetLimits(0, MaxPoints, vacMinY, vacMaxY);
+            vacuumLevelPlot.Plot.Axes.Left.Label.Text = "Vacuum Level PSI";
+            vacuumLevelPlot.Plot.Axes.Left.Label.FontSize = 40;
+            vacuumLevelPlot.Plot.Axes.Bottom.Label.Text = "Point";
+            vacuumLevelPlot.Plot.Axes.Bottom.Label.FontSize = 40;
+            vacuumLevelPlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
+            vacuumLevelPlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+
             //Paced redraw for smoothness
             _frameTimer.Tick += FrameTick;
             _frameTimer.Start();
@@ -129,9 +146,10 @@ namespace Serial_Com
             sheathRatePlot.Refresh();
             sampleVelocityPlot.Refresh();
             sampleRatePlot.Refresh();
+            vacuumLevelPlot.Refresh();
         }
 
-        private void AppendData(float sheathRate, int sampleVelocity, float sampleRate)
+        private void AppendData(float sheathRate, int sampleVelocity, float sampleRate, float vacuumLevel)
         {
             //Increment the next x-axis point
             double nextX = _xs.Count == 0 ? 0 : _xs[^1] + 1;
@@ -139,6 +157,7 @@ namespace Serial_Com
             _sheath.Add(sheathRate);
             _sampleVel.Add(sampleVelocity);
             _sampleRate.Add(sampleRate);
+            _vacuumLevel.Add(vacuumLevel);
 
             if (_xs.Count >= MaxPoints)
             {
@@ -146,6 +165,7 @@ namespace Serial_Com
                 _sheath.RemoveAt(0);
                 _sampleVel.RemoveAt(0);
                 _sampleRate.RemoveAt(0);
+                _vacuumLevel.RemoveAt(0);
             }
         }
 
@@ -188,6 +208,16 @@ namespace Serial_Com
             else
             {
                 KeepGraphWithinBounds(sampleVelocityPlot.Plot, minX, lastX);
+            }
+
+            //Vacuum Graph Options
+            if (vacuumPlotAutoScroll.IsChecked == true)
+            {
+                AutoScrollXAxis(vacuumLevelPlot.Plot, minX, lastX);
+            }
+            else
+            {
+                KeepGraphWithinBounds(vacuumLevelPlot.Plot, minX, lastX);
             }
 
         }
@@ -286,8 +316,12 @@ namespace Serial_Com
                 case nameof(sampleRateAutoScaleButton):
                     ResetScaleGraph(sampleRatePlot.Plot, minX, lastX);
                     break;
+                case nameof(vacuumAutoScaleButton):
+                    ResetScaleGraph(vacuumLevelPlot.Plot, minX, lastX);
+                    break;
             }
         }
+
         private void OnQueryFlowRecieved(object? sender, FluidicsSystemInfo info)
         {
             Dispatcher.Invoke(() =>
@@ -322,10 +356,15 @@ namespace Serial_Com
             sheathRateStableIndicator.Fill = info.SheathRateUnstable == 1 ? Brushes.Green : Brushes.Red;
             sampleRateStableIndicator.Fill = info.SampleRateUnstable == 1 ? Brushes.Green : Brushes.Red;
 
-            AppendData(_rndm.NextSingle() * _rndm.Next(0, 5), _rndm.Next(0, 3666), _rndm.NextSingle() * _rndm.Next(0, 120));
+            //TODO: Comment or delete after testing
+            AppendData(_rndm.NextSingle() * _rndm.Next(0, 5), _rndm.Next(0, 3666), _rndm.NextSingle() * _rndm.Next(0, 120), _rndm.NextSingle() * _rndm.Next(0, 5) * -1);
 
             //Vacuum Level
-            wasteVacuumLevel.Content = $"{info.WasteVacuumLevel:F6} PSI";
+            var _vacLevel = info.WasteVacuumLevel;
+            wasteVacuumLevel.Content = $"{_vacLevel:F6} PSI";
+
+            //TODO: Uncomment after testing
+            //AppendData(_sheathRate, _sampleVelocity, _sampleRate, _vacLevel);
 
             //Tube Detection
             tubeDetectionIndicator.Fill = info.TubeDetection == 1 ? Brushes.Green : Brushes.Red;
