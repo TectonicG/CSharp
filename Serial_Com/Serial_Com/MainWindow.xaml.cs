@@ -1,5 +1,8 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
+using ScottPlot;
+using ScottPlot.Hatches;
+using ScottPlot.Plottables;
 using Serial_Com.Services;
 using Serial_Com.Services.Devices;
 using Serial_Com.Services.Serial;
@@ -7,9 +10,12 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,7 +26,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
+
 
 
 
@@ -33,19 +40,254 @@ namespace Serial_Com
     {
 
         private readonly Fluidics fluidics;
+        // Settings
+        private readonly List<double> _xs = new();
+        private readonly List<double> _sheath = new();
+        private readonly List<double> _sampleVel = new();
+        private readonly List<double> _sampleRate = new();
+        private readonly Dictionary<Plot, (double, double)> graphYAxisLimits = new Dictionary<Plot, (double, double)>();
 
+
+        private readonly DispatcherTimer _frameTimer = new() { Interval = TimeSpan.FromMilliseconds(33) }; // ~30 FPS
+        private const int MaxPoints = 1000; // your sliding window
+
+        private Random _rndm = new Random();
         public MainWindow()
         {
 
             InitializeComponent();
+
+            //Add lookupable limits to graphs
+            graphYAxisLimits.Add(sheathRatePlot.Plot, (-5.5, 5.5));
+            graphYAxisLimits.Add(sampleVelocityPlot.Plot, (-3666, 3666));
+            graphYAxisLimits.Add(sampleRatePlot.Plot, (-120.0, 120.0));
+
 
             //Start the backend
             fluidics = new Fluidics();
             fluidics.ConnectionChanged += OnFluidicsConnectionChanged;
             fluidics.OnQueryFlowRecieved += OnQueryFlowRecieved;
 
+            InitPlots();
         }
 
+        private void InitPlots()
+        {
+            //Sheath Rate Plot
+            var p1 = sheathRatePlot.Plot.Add.Scatter(_xs, _sheath);
+            p1.MarkerShape = MarkerShape.None;
+            p1.LineColor = ScottPlot.Colors.DarkGreen;
+            p1.LineWidth = 2;
+            graphYAxisLimits.TryGetValue(sheathRatePlot.Plot, out var sheathYLimits);
+            var (sheathMinY, sheathMaxY) = sheathYLimits;
+            sheathRatePlot.Plot.Axes.SetLimits(0, MaxPoints, sheathMinY, sheathMaxY);
+            sheathRatePlot.Plot.Axes.Left.Label.Text = "Sheath Rate mL/min";
+            sheathRatePlot.Plot.Axes.Left.Label.FontSize = 40;
+            sheathRatePlot.Plot.Axes.Bottom.Label.Text = "Point";
+            sheathRatePlot.Plot.Axes.Bottom.Label.FontSize = 40;
+            sheathRatePlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
+            sheathRatePlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+
+            //Sample Velocity Plot
+            var p2 = sampleVelocityPlot.Plot.Add.Scatter(_xs, _sampleVel);
+            p2.MarkerShape = MarkerShape.None;
+            p2.LineColor = ScottPlot.Colors.DarkBlue;
+            p2.LineWidth = 2;
+            graphYAxisLimits.TryGetValue(sampleVelocityPlot.Plot, out var velocityYLimits);
+            var (velocityMinY, velocityMaxY) = velocityYLimits;
+            sampleVelocityPlot.Plot.Axes.SetLimits(0, MaxPoints, velocityMinY, velocityMaxY);
+            sampleVelocityPlot.Plot.Axes.Left.Label.Text = "Sample Velocity mm/ss";
+            sampleVelocityPlot.Plot.Axes.Left.Label.FontSize = 40;
+            sampleVelocityPlot.Plot.Axes.Bottom.Label.Text = "Point";
+            sampleVelocityPlot.Plot.Axes.Bottom.Label.FontSize = 40;
+            sampleVelocityPlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
+            sampleVelocityPlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+
+            //Sample Rate Plot
+            var p3 = sampleRatePlot.Plot.Add.Scatter(_xs, _sampleRate);
+            p3.MarkerShape = MarkerShape.None;
+            p3.LineColor = ScottPlot.Colors.DarkRed;
+            p3.LineWidth = 2;
+            graphYAxisLimits.TryGetValue(sampleRatePlot.Plot, out var sampleYLimits);
+            var (sampleMinY, sampleMaxY) = sampleYLimits;
+            sampleRatePlot.Plot.Axes.SetLimits(0, MaxPoints, sampleMinY, sampleMaxY);
+            sampleRatePlot.Plot.Axes.Left.Label.Text = "Sample Rate uL/min";
+            sampleRatePlot.Plot.Axes.Left.Label.FontSize = 40;
+            sampleRatePlot.Plot.Axes.Bottom.Label.Text = "Point";
+            sampleRatePlot.Plot.Axes.Bottom.Label.FontSize = 40;
+            sampleRatePlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
+            sampleRatePlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+
+            //Paced redraw for smoothness
+            _frameTimer.Tick += FrameTick;
+            _frameTimer.Start();
+        }
+
+        private void FrameTick(object? sender, EventArgs e)
+        {
+            UpdateScrollWindow();
+            sheathRatePlot.Refresh();
+            sampleVelocityPlot.Refresh();
+            sampleRatePlot.Refresh();
+        }
+
+        private void AppendData(float sheathRate, int sampleVelocity, float sampleRate)
+        {
+            //Increment the next x-axis point
+            double nextX = _xs.Count == 0 ? 0 : _xs[^1] + 1;
+            _xs.Add(nextX);
+            _sheath.Add(sheathRate);
+            _sampleVel.Add(sampleVelocity);
+            _sampleRate.Add(sampleRate);
+
+            if (_xs.Count >= MaxPoints)
+            {
+                _xs.RemoveAt(0);
+                _sheath.RemoveAt(0);
+                _sampleVel.RemoveAt(0);
+                _sampleRate.RemoveAt(0);
+            }
+        }
+
+        private void UpdateScrollWindow()
+        {
+            if (_xs.Count == 0)
+            {
+                return;
+            }
+
+            double lastX = _xs[^1];
+            double minX = lastX - MaxPoints;
+            minX = minX < 0 ? 0 : minX;
+
+            //Sheath Rate Graph Options
+            if (sheathRatePlotAutoScroll.IsChecked == true)
+            {
+                AutoScrollXAxis(sheathRatePlot.Plot, minX, lastX);
+            }
+            else
+            {
+                KeepGraphWithinBounds(sheathRatePlot.Plot, minX, lastX);
+            }
+
+            //Sample Rate Graph Options
+            if (sampleRatePlotAutoScroll.IsChecked == true)
+            {
+                AutoScrollXAxis(sampleRatePlot.Plot, minX, lastX);
+            }
+            else
+            {
+                KeepGraphWithinBounds(sampleRatePlot.Plot, minX, lastX);
+            }
+
+            //Sample Velocity Graph Options
+            if (sampleVelocityPlotAutoScroll.IsChecked == true)
+            {
+                AutoScrollXAxis(sampleVelocityPlot.Plot, minX, lastX);
+            }
+            else
+            {
+                KeepGraphWithinBounds(sampleVelocityPlot.Plot, minX, lastX);
+            }
+
+        }
+
+        private void AutoScrollXAxis(Plot plot, double xmin, double xmax)
+        {
+            var currentLimits = plot.Axes.GetLimits();
+
+            double xMinSet = currentLimits.Left;
+            double yMinSet = currentLimits.Bottom;
+            double yMaxSet = currentLimits.Top;
+            graphYAxisLimits.TryGetValue(plot, out var yLimits);
+            var (ymin, ymax) = yLimits;
+
+            if (xMinSet < xmin)
+            {
+                xMinSet = xmin;
+            }
+
+            if (yMinSet < ymin)
+            {
+                yMinSet = ymin;
+            }
+
+            if (yMaxSet > ymax)
+            {
+                yMaxSet = ymax;
+            }
+
+            plot.Axes.SetLimits(xMinSet, xmax, yMinSet, yMaxSet);
+        }
+
+        private void KeepGraphWithinBounds(Plot plot, double xmin, double xmax)
+        {
+            //Only resets the limits if it needs to keep the graph within bounds
+            var currentLimits = plot.Axes.GetLimits();
+
+            double xMinSet = currentLimits.Left;
+            double xMaxSet = currentLimits.Right;
+            double yMinSet = currentLimits.Bottom;
+            double yMaxSet = currentLimits.Top;
+
+            graphYAxisLimits.TryGetValue(plot, out var yLimits);
+            var (ymin, ymax) = yLimits;
+
+            if (xMinSet < xmin)
+            {
+                xMinSet = xmin;
+            }
+
+            if (xMaxSet > xmax)
+            {
+                xMaxSet = xmax;
+            }
+
+            if (yMinSet < ymin)
+            {
+                yMinSet = ymin;
+            }
+
+            if (yMaxSet > ymax)
+            {
+                yMaxSet = ymax;
+            }
+
+            plot.Axes.SetLimits(xMinSet, xMaxSet, yMinSet, yMaxSet);
+        }
+
+        private void ResetScaleGraph(Plot plot, double xmin, double xmax)
+        {
+            graphYAxisLimits.TryGetValue(plot, out var yLimits);
+            var (ymin, ymax) = yLimits;
+            plot.Axes.SetLimits(xmin, xmax, ymin, ymax);
+
+        }
+
+        private void OnResetScaleGraphClicked(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button { Name: string name } btn))
+            {
+                return;
+            }
+
+            double lastX = _xs[^1];
+            double minX = lastX - MaxPoints;
+            minX = minX < 0 ? 0 : minX;
+
+            switch (name)
+            {
+                case nameof(sheathRateAutoScaleButton):
+                    ResetScaleGraph(sheathRatePlot.Plot, minX, lastX);
+                    break;
+                case nameof(sampleVelocityRateAutoScaleButton):
+                    ResetScaleGraph(sampleVelocityPlot.Plot, minX, lastX);
+                    break;
+                case nameof(sampleRateAutoScaleButton):
+                    ResetScaleGraph(sampleRatePlot.Plot, minX, lastX);
+                    break;
+            }
+        }
         private void OnQueryFlowRecieved(object? sender, FluidicsSystemInfo info)
         {
             Dispatcher.Invoke(() =>
@@ -69,12 +311,18 @@ namespace Serial_Com
             pumpStates.Add(PumpStates.SpeedControlled, ("Speed Controlled", sheathPumpSpeedButton, wastePumpSpeedButton));
 
             //Flow Rates
-            sheathRate.Content = $"{info.SheathRate:F4} mL/min";
-            sampleVelocity.Content = $"{info.SampleVelocity} mm/s";
-            sampleRate.Content = $"{info.SampleRate:F4} uL/min";
+            var _sheathRate = info.SheathRate;
+            var _sampleVelocity = info.SampleVelocity;
+            var _sampleRate = info.SampleRate;
+
+            sheathRate.Content = $"{_sheathRate:F4} mL/min";
+            sampleVelocity.Content = $"{_sampleVelocity} mm/s";
+            sampleRate.Content = $"{_sampleRate:F4} uL/min";
             targetSampleRate.Content = $"{info.TargetSample} uL/min";
             sheathRateStableIndicator.Fill = info.SheathRateUnstable == 1 ? Brushes.Green : Brushes.Red;
             sampleRateStableIndicator.Fill = info.SampleRateUnstable == 1 ? Brushes.Green : Brushes.Red;
+
+            AppendData(_rndm.NextSingle() * _rndm.Next(0, 5), _rndm.Next(0, 3666), _rndm.NextSingle() * _rndm.Next(0, 120));
 
             //Vacuum Level
             wasteVacuumLevel.Content = $"{info.WasteVacuumLevel:F6} PSI";
@@ -151,7 +399,7 @@ namespace Serial_Com
 
             valveSevenIndicator.Fill = info.ValveStates[6] == 1 ? Brushes.Green : Brushes.Red;
             valveSevenButton.Background = info.ValveStates[6] == 1 ? Brushes.Green : Brushes.Red;
-            valveSevenButton.Content = info.ValveStates[7] == 1 ? "Disable Valve 7" : "Enable Valve 7";
+            valveSevenButton.Content = info.ValveStates[6] == 1 ? "Disable Valve 7" : "Enable Valve 7";
 
             valveEightIndicator.Fill = info.ValveStates[7] == 1 ? Brushes.Green : Brushes.Red;
             valveEightButton.Background = info.ValveStates[7] == 1 ? Brushes.Green : Brushes.Red;
@@ -437,7 +685,7 @@ namespace Serial_Com
         private async void HandlePump(object? sender, RoutedEventArgs e)
         {
 
-            if (!(sender is Button { Name: string btnName, Tag: string type }))
+            if (!(sender is Button { Name: string btnName, Tag: string type } btn))
             {
                 return;
             }
@@ -480,6 +728,124 @@ namespace Serial_Com
             }
 
             await fluidics.HandlePump(pumpSelection, state, speed);
+
+        }
+
+        private async void HomeZAxis(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            await fluidics.HomeZAxis();
+        }
+
+        private async void MoveZAxis(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            string height = sliderDepthValue.Content.ToString() ?? "0";
+            string trimmed = height.Replace(" mm", "");
+
+            await fluidics.MoveZAxis(float.Parse(trimmed));
+        }
+        private void ZAxisSliderChanged(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is Slider { Value: double sldrValue } sldr))
+            {
+                return;
+            }
+
+            sliderDepthValue.Content = $"{(((int)sldrValue) / 100.0).ToString()} mm";
+        }
+
+        private void ZAxisTextBoxChanged(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is TextBox { Text: string value } txtBx))
+            {
+                return;
+            }
+
+            try
+            {
+                zaxisSlider.Value = Double.Parse(value);
+            }
+            catch
+            {
+                zaxisSlider.Value = 0;
+            }
+
+        }
+
+        private void zAxisContectMenuButtonClicked(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button { Name: string btnName } btn))
+            {
+                return;
+            }
+
+            if (btnName == zaxisSetHeightButton.Name)
+            {
+                zaxisSetHeightButton.ContextMenu.PlacementTarget = zaxisSetHeightButton;
+                zaxisSetHeightButton.ContextMenu.IsOpen = true;
+            }
+            else if (btnName == zaxisMoveToSetHeightButton.Name)
+            {
+                zaxisMoveToSetHeightButton.ContextMenu.PlacementTarget = zaxisMoveToSetHeightButton;
+                zaxisMoveToSetHeightButton.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private async void SetHeight(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is MenuItem { Name: string btnName } btn))
+            {
+                return;
+            }
+
+            Dictionary<string, SettableZAxisHeights> setHeights = new Dictionary<string, SettableZAxisHeights>();
+            setHeights.Add("setTubeTop", SettableZAxisHeights.TubeTop);
+            setHeights.Add("setTubeBottom", SettableZAxisHeights.TubeBottom);
+            setHeights.Add("setPlateTop", SettableZAxisHeights.PlateTop);
+            setHeights.Add("setPlateBottom", SettableZAxisHeights.PlateBottom);
+
+            setHeights.TryGetValue(btnName, out var setHeight);
+            string height = sliderDepthValue.Content.ToString() ?? "0";
+            string trimmed = height.Replace(" mm", "");
+
+            await fluidics.SetHeight(setHeight, float.Parse(trimmed));
+        }
+
+        private async void MoveToSetHeight(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is MenuItem { Name: string btnName } btn))
+            {
+                return;
+            }
+
+            Dictionary<string, SettableZAxisHeights> setHeights = new Dictionary<string, SettableZAxisHeights>();
+            setHeights.Add("moveTubeTop", SettableZAxisHeights.TubeTop);
+            setHeights.Add("moveTubeBottom", SettableZAxisHeights.TubeBottom);
+            setHeights.Add("movePlateTop", SettableZAxisHeights.PlateTop);
+            setHeights.Add("movePlateBottom", SettableZAxisHeights.PlateBottom);
+
+            setHeights.TryGetValue(btnName, out var setHeight);
+
+            await fluidics.MoveToSetHeight(setHeight);
+        }
+
+        private async void EStopZAxis(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            await fluidics.EStopZAxis();
 
         }
     }

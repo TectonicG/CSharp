@@ -238,7 +238,7 @@ namespace Serial_Com.Services.Devices
         public async Task<ErrorCode> HandlePump(PumpSelection pump, PumpStates state, uint speed)
         {
 
-            if(speed > 100)
+            if (speed > 100)
             {
                 speed = 100;
             }
@@ -265,6 +265,111 @@ namespace Serial_Com.Services.Devices
             return await _serialControl.SendAndWaitForResult(hstMsg);
         }
 
+        public async Task<ErrorCode> HomeZAxis()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    ZAxis = new ZAxisControl
+                    {
+                        SendHome = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> MoveZAxis(float mm)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    ZAxis = new ZAxisControl
+                    {
+                        MoveZAxisMm = mm
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+        public async Task<ErrorCode> SetHeight(SettableZAxisHeights heightSel, float setHeight)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    ZAxis = new ZAxisControl
+                    {
+                        SetHeightSelection = heightSel,
+                        Height = setHeight
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> MoveToSetHeight(SettableZAxisHeights heightSel)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    ZAxis = new ZAxisControl
+                    {
+                        MoveToSetHeight = heightSel
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> EStopZAxis()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    ZAxis = new ZAxisControl
+                    {
+                        Disable = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
         /*<--------- PRIVATE --------->*/
 
 
@@ -286,7 +391,7 @@ namespace Serial_Com.Services.Devices
         private async Task QueryFluidicsSystemAsync(CancellationToken ct)
         {
 
-            int INTERVAL_MS = 100;
+            int INTERVAL_MS = 50;
 
             //Want to ask fluidics for a system update every 100ms
             HostMessage hstMsg = new HostMessage

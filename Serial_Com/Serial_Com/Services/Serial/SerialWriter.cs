@@ -62,7 +62,7 @@ namespace Serial_Com.Services.Serial
                         await WriteCommandAsync(msg.Msg);
 
                         //Start the timeout when the message is sent
-                        _ = StartTimeoutAsync(msg, _ct);
+                        await StartTimeoutAsync(msg, _ct);
                     }
                 }
             }

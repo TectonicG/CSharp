@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
         xmlns:local="clr-namespace:Serial_Com"
         mc:Ignorable="d"
         Title="MainWindow" Height="712" Width="1319">
@@ -16,6 +17,7 @@
                             />
         </GroupBox.Header>
 
+        <!--TABS-->
         <TabControl Name="fluidicsTabControl" TabStripPlacement="Top" Margin="10" Height="Auto">
             <TabItem Name="SerialControls" Header="Serial" FontWeight="Bold">
                 <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -48,10 +50,11 @@
                 </GroupBox>
             </TabItem>
 
-
+            <!--FLUIDICS CONTROL-->
             <TabItem Name="fluidicsControls" Header="Controls" FontWeight="Bold">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -62,6 +65,7 @@
                         <RowDefinition  Height="Auto"/>
                     </Grid.RowDefinitions>
 
+                    <!--VALVE CONTROLS-->
                     <GroupBox Grid.Row ="0" Grid.Column="0" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
                         <GroupBox.Header>
                             <Label Content="Rocker Valve Controls"
@@ -102,6 +106,7 @@
                         </Grid>
                     </GroupBox>
 
+                    <!--PINCH VALVE CONTROLS-->
                     <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
                         <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
                             <GroupBox.Header>
@@ -135,6 +140,7 @@
                             </Grid>
                         </GroupBox>
 
+                        <!--PROP VALVE CONTROLS-->
                         <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
                             <GroupBox.Header>
                                 <Label Content="Proportional Valve Controls"
@@ -168,6 +174,7 @@
                         </GroupBox>
                     </StackPanel>
 
+                    <!--SHEATH PUMP-->
                     <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" >
                         <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Medium" >
                             <GroupBox.Header>
@@ -213,6 +220,7 @@
                             </StackPanel>
                         </GroupBox>
 
+                        <!--WASTE PUMP-->
                         <GroupBox Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Medium" >
                             <GroupBox.Header>
                                 <Label Content="Waste Pump Controls"
@@ -221,7 +229,6 @@
                            FontWeight="Bold"
                             />
                             </GroupBox.Header>
-
                             <StackPanel Orientation="Vertical">
                                 <CheckBox Name="enableWastePumpChangesButton" Content="Enable Waste Pump Controls" Margin="13, 5, 0, 0" Click="EnableWastePumpChanges"/>
                                 <StackPanel Orientation="Horizontal">
@@ -258,10 +265,59 @@
                         </GroupBox>
                     </StackPanel>
 
+                    <!--Z-AXIS CONTROLS-->
+                    <GroupBox Grid.Row ="0" Grid.Column="3" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <GroupBox.Header>
+                            <Label Content="Z-Axis Controls"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                            />
+                        </GroupBox.Header>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Slider Name="zaxisSlider" Orientation="Vertical" Margin="10" Minimum="0" Maximum="10000" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="10" LargeChange="10" ValueChanged="ZAxisSliderChanged" IsDirectionReversed="True"/>
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Probe Depth, steps: "/>
+                                    <TextBox Width="100" Height="20" TextChanged="ZAxisTextBoxChanged" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Slider Depth: "/>
+                                    <Label Name="sliderDepthValue"  Content="0.00 mm: "/>
+                                </StackPanel>
+                                <Button Name="zaxisHomeButton"  Content="Home Z-Axis" Margin="5" Click="HomeZAxis"></Button>
+                                <Button Name="zaxisMoveButton" Content="Move" Margin="5" Click="MoveZAxis"></Button>
+
+                                <Button Name="zaxisSetHeightButton" Content="Set Height" Margin="5" Click="zAxisContectMenuButtonClicked">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Name="setTubeTop" Header="Tube Top" Click="SetHeight"/>
+                                            <MenuItem Name="setTubeBottom" Header="Tube Bottom" Click="SetHeight"/>
+                                            <MenuItem Name="setPlateTop" Header="Plate Top" Click="SetHeight"/>
+                                            <MenuItem Name="setPlateBottom" Header="Plate Bottom" Click="SetHeight"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+                                <Button Name="zaxisMoveToSetHeightButton" Content="Move to set height" Margin="5" Click="zAxisContectMenuButtonClicked">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Name="moveTubeTop" Header="Tube Top" Click="MoveToSetHeight"/>
+                                            <MenuItem Name="moveTubeBottom" Header="Tube Bottom" Click="MoveToSetHeight"/>
+                                            <MenuItem Name="movePlateTop" Header="Plate Top" Click="MoveToSetHeight"/>
+                                            <MenuItem Name="movePlateBottom" Header="Plate Bottom" Click="MoveToSetHeight"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+                                <Button Name="zaxisEStop" Content="EStop Z-Axis" Margin="5" Click="EStopZAxis"></Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
 
                 </Grid>
             </TabItem>
-            <TabItem Name="fluidics_runtime_info" Header="Info" FontWeight="Bold">
+            <!--FLUIDICS INFO-->
+            <TabItem Name="fluidicsRuntimeInfo" Header="Info" FontWeight="Bold">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -649,6 +705,42 @@
                     </GroupBox>
                 </Grid>
             </TabItem>
+
+            <TabItem Name="Graphs" Header="Graphs" FontWeight="Bold">
+                <Grid>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"/>
+                        <RowDefinition  Height="*"/>
+                        <RowDefinition  Height="Auto"/>
+                        <RowDefinition  Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <ScottPlot:WpfPlot Grid.Row="1" Grid.Column="0" Name="sheathRatePlot"/>
+                    <StackPanel Grid.Row="0" Grid.Column="0"  Orientation="Horizontal">
+                        <Button x:Name="sheathRateAutoScaleButton" Content="Reset Scale" Margin="50,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                        <CheckBox x:Name="sheathRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,10,0,0" VerticalAlignment="Center" IsChecked="True"/>
+                    </StackPanel>
+
+                    <ScottPlot:WpfPlot Grid.Row="1" Grid.Column="1" Name="sampleVelocityPlot"/>
+                    <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal">
+                        <Button x:Name="sampleVelocityRateAutoScaleButton" Content="Reset Scale" Margin="50,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                        <CheckBox Grid.Row="0" Grid.Column="1" x:Name="sampleVelocityPlotAutoScroll" Content="Auto Scroll X-Axis" Margin="50,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    </StackPanel>
+
+                    <ScottPlot:WpfPlot Grid.Row="3" Grid.Column="0" Name="sampleRatePlot"/>
+                    <StackPanel Grid.Row="2" Grid.Column="0"  Orientation="Horizontal">
+                        <Button x:Name="sampleRateAutoScaleButton" Content="Reset Scale" Margin="50,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                        <CheckBox Grid.Row="2" Grid.Column="0" x:Name="sampleRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="50,10,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
         </TabControl>
     </GroupBox>
 </Window>
