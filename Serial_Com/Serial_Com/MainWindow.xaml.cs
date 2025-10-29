@@ -10,6 +10,7 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Printing;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.Arm;
@@ -491,30 +492,34 @@ namespace Serial_Com
             leakDetectorThreeConnectedIndicator.Fill = info.LeakDetectorConnectionStates[2] == 1 ? Brushes.Green : Brushes.Red;
 
             //Start stop button
-            var systemState = info.SystemState;
-            switch (systemState)
+            var _systemState = info.SystemState;
+            switch (_systemState)
             {
                 case FluidicsSystemState.FluidicsStarted:
                     startStopButton.Tag = "started";
                     startStopButton.Content = "Stop";
+                    systemState.Content = "Started";
                     startStopButton.Background = Brushes.Red;
                     break;
 
                 case FluidicsSystemState.FluidicsStarting:
                     startStopButton.Tag = "starting";
                     startStopButton.Content = "Starting...";
+                    systemState.Content = "Starting...";
                     startStopButton.Background = Brushes.LightGreen;
                     break;
 
                 case FluidicsSystemState.FluidicsStopped:
                     startStopButton.Tag = "stopped";
                     startStopButton.Content = "Start";
+                    systemState.Content = "Stopped";
                     startStopButton.Background = Brushes.Green;
                     break;
 
                 case FluidicsSystemState.FluidicsStopping:
                     startStopButton.Tag = "stopping";
                     startStopButton.Content = "Stopping...";
+                    systemState.Content = "Stopping...";
                     startStopButton.Background = Brushes.Yellow;
                     break;
             }
