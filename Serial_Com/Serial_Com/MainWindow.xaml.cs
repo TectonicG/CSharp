@@ -49,8 +49,8 @@ namespace Serial_Com
         private readonly Dictionary<Plot, (double, double)> graphYAxisLimits = new Dictionary<Plot, (double, double)>();
 
 
-        private readonly DispatcherTimer _frameTimer = new() { Interval = TimeSpan.FromMilliseconds(33) }; // ~30 FPS
-        private const int MaxPoints = 10000; // your sliding window
+        private readonly DispatcherTimer _frameTimer = new() { Interval = TimeSpan.FromMilliseconds(50) }; // ~20 FPS
+        private const int MaxPoints = 3000;
 
         private Random _rndm = new Random();
         public MainWindow()
@@ -89,6 +89,8 @@ namespace Serial_Com
             sheathRatePlot.Plot.Axes.Bottom.Label.FontSize = 40;
             sheathRatePlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
             sheathRatePlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+            sheathRatePlot.Plot.Axes.AntiAlias(true);
+
 
             //Sample Velocity Plot
             var p2 = sampleVelocityPlot.Plot.Add.Scatter(_xs, _sampleVel);
@@ -104,6 +106,7 @@ namespace Serial_Com
             sampleVelocityPlot.Plot.Axes.Bottom.Label.FontSize = 40;
             sampleVelocityPlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
             sampleVelocityPlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+            sampleVelocityPlot.Plot.Axes.AntiAlias(true);
 
             //Sample Rate Plot
             var p3 = sampleRatePlot.Plot.Add.Scatter(_xs, _sampleRate);
@@ -119,6 +122,7 @@ namespace Serial_Com
             sampleRatePlot.Plot.Axes.Bottom.Label.FontSize = 40;
             sampleRatePlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
             sampleRatePlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+            sampleRatePlot.Plot.Axes.AntiAlias(true);
 
             //Sample Rate Plot
             var p4 = vacuumLevelPlot.Plot.Add.Scatter(_xs, _vacuumLevel);
@@ -134,6 +138,7 @@ namespace Serial_Com
             vacuumLevelPlot.Plot.Axes.Bottom.Label.FontSize = 40;
             vacuumLevelPlot.Plot.Axes.Left.TickLabelStyle.FontSize = 20;
             vacuumLevelPlot.Plot.Axes.Bottom.TickLabelStyle.FontSize = 20;
+            vacuumLevelPlot.Plot.Axes.AntiAlias(true);
 
             //Paced redraw for smoothness
             _frameTimer.Tick += FrameTick;
@@ -349,22 +354,35 @@ namespace Serial_Com
             var _sampleVelocity = info.SampleVelocity;
             var _sampleRate = info.SampleRate;
 
-            sheathRate.Content = $"{_sheathRate:F4} mL/min";
-            sampleVelocity.Content = $"{_sampleVelocity} mm/s";
-            sampleRate.Content = $"{_sampleRate:F4} uL/min";
+            //Comment out or delete later:
+            _sheathRate = _rndm.NextSingle() * (float)5.5;
+            _sampleVelocity = _rndm.Next(0, 3666);
+            _sampleRate = _rndm.NextSingle() * 120;
+
+            var sheathRateFormat = $"{_sheathRate:F4} mL/min";
+            var sampleVelocityFormat = $"{_sampleVelocity} mm/s";
+            var sampleRateFormat = $"{_sampleRate:F4} uL/min";
+
+            sheathRate.Content = sheathRateFormat;
+            sheathRateGraphValue.Content = sheathRateFormat;
+            sampleVelocity.Content = sampleVelocityFormat;
+            sampleVelocityGraphValue.Content = sampleVelocityFormat;
+            sampleRate.Content = sampleRateFormat;
+            sampleRateGraphValue.Content = sampleRateFormat;
             targetSampleRate.Content = $"{info.TargetSample} uL/min";
             sheathRateStableIndicator.Fill = info.SheathRateUnstable == 1 ? Brushes.Green : Brushes.Red;
             sampleRateStableIndicator.Fill = info.SampleRateUnstable == 1 ? Brushes.Green : Brushes.Red;
 
-            //TODO: Comment or delete after testing
-            AppendData(_rndm.NextSingle() * _rndm.Next(0, 5), _rndm.Next(0, 3666), _rndm.NextSingle() * _rndm.Next(0, 120), _rndm.NextSingle() * _rndm.Next(0, 5) * -1);
 
             //Vacuum Level
             var _vacLevel = info.WasteVacuumLevel;
-            wasteVacuumLevel.Content = $"{_vacLevel:F6} PSI";
+            //Comment out or delete later:
+            _vacLevel = _rndm.NextSingle() * (float)-5.0;
+            var vacLevelFormat = $"{_vacLevel:F6} PSI";
+            vacuumLevelGraphValue.Content = vacLevelFormat;
+            wasteVacuumLevel.Content = vacLevelFormat;
 
-            //TODO: Uncomment after testing
-            //AppendData(_sheathRate, _sampleVelocity, _sampleRate, _vacLevel);
+            AppendData(_sheathRate, _sampleVelocity, _sampleRate, _vacLevel);
 
             //Tube Detection
             tubeDetectionIndicator.Fill = info.TubeDetection == 1 ? Brushes.Green : Brushes.Red;
@@ -471,6 +489,35 @@ namespace Serial_Com
 
             leakDetectorThreeStateIndicator.Fill = info.LeakDetectorStates[2] == 1 ? Brushes.Green : Brushes.Red;
             leakDetectorThreeConnectedIndicator.Fill = info.LeakDetectorConnectionStates[2] == 1 ? Brushes.Green : Brushes.Red;
+
+            //Start stop button
+            var systemState = info.SystemState;
+            switch (systemState)
+            {
+                case FluidicsSystemState.FluidicsStarted:
+                    startStopButton.Tag = "started";
+                    startStopButton.Content = "Stop";
+                    startStopButton.Background = Brushes.Red;
+                    break;
+
+                case FluidicsSystemState.FluidicsStarting:
+                    startStopButton.Tag = "starting";
+                    startStopButton.Content = "Starting...";
+                    startStopButton.Background = Brushes.LightGreen;
+                    break;
+
+                case FluidicsSystemState.FluidicsStopped:
+                    startStopButton.Tag = "stopped";
+                    startStopButton.Content = "Start";
+                    startStopButton.Background = Brushes.Green;
+                    break;
+
+                case FluidicsSystemState.FluidicsStopping:
+                    startStopButton.Tag = "stopping";
+                    startStopButton.Content = "Stopping...";
+                    startStopButton.Background = Brushes.Yellow;
+                    break;
+            }
 
         }
 
@@ -885,6 +932,33 @@ namespace Serial_Com
             }
 
             await fluidics.EStopZAxis();
+
+        }
+
+        private async void StartStop(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button { Tag: string systemState } btn))
+            {
+                return;
+            }
+
+            switch (systemState)
+            {
+                case "stopped":
+                    await fluidics.StartFluidics();
+                    break;
+                case "stopping":
+                    //do nothing 
+                    break;
+                case "started":
+                    await fluidics.StopFluidics();
+                    break;
+                case "starting":
+                    //do nothing
+                    break;
+            }
+
+
 
         }
     }

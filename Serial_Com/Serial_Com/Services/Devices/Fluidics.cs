@@ -370,6 +370,48 @@ namespace Serial_Com.Services.Devices
             return await _serialControl.SendAndWaitForResult(hstMsg);
         }
 
+        public async Task<ErrorCode> StartFluidics()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Start = new SystemStart
+                    {
+                        Start = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StopFluidics()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Stop = new SystemStop
+                    {
+                        Stop = 1
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
         /*<--------- PRIVATE --------->*/
 
 
