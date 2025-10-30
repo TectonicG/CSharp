@@ -1,4 +1,5 @@
-﻿using Serial_Com.Services.Serial;
+﻿using Google.Protobuf.WellKnownTypes;
+using Serial_Com.Services.Serial;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,8 +25,7 @@ namespace Serial_Com.Services.Devices
         private SerialReaderWriter? _serialControl;
         private Task? _queryFlow;
         private CancellationTokenSource? _cancelFluidicsSerial;
-        //Channel to write tot he serial writer
-        private uint _token = 0;
+        public event EventHandler<Signal>? OnSignalReceived;
 
         /*<--------- PUBLIC --------->*/
         public async Task<bool> ConnectToFluidicsAsync(string port)
@@ -412,6 +412,512 @@ namespace Serial_Com.Services.Devices
             return await _serialControl.SendAndWaitForResult(hstMsg);
         }
 
+
+        public async Task<ErrorCode> StartDebubble()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Debubble = new DeBubbleTask
+                    {
+                        State = StopStartTaskDef.StartTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StopDebubble()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Debubble = new DeBubbleTask
+                    {
+                        State = StopStartTaskDef.StopTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StartBackflush()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    BackFlush = new BackFlushTask
+                    {
+                        State = StopStartTaskDef.StartTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StopBackflush()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    BackFlush = new BackFlushTask
+                    {
+                        State = StopStartTaskDef.StopTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StartPurgeFilter()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PurgeFilter = new PurgeFilterTask
+                    {
+                        State = StopStartTaskDef.StartTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StopPurgeFilter()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    PurgeFilter = new PurgeFilterTask
+                    {
+                        State = StopStartTaskDef.StopTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> BleachCleanStepOne()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Cleaning = new CleanTask
+                    {
+                        State = StopStartTaskDef.StartTask,
+                        Step = CleaningSteps.BleachCleanStepOne
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            MessageBox.Show("Please fill bleach container with fresh 10% bleach and switch sheath line to the bleach tank");
+
+            //Home Z-Axis
+            var result = await HomeZAxis();
+            if (result == ErrorCode.UnknownError)
+            {
+                return result;
+            }
+
+            MessageBox.Show("Please insert sample tube with filled with 3mL of cleaning solution");
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> BleachCleanStepTwo()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Cleaning = new CleanTask
+                    {
+                        State = StopStartTaskDef.StartTask,
+                        Step = CleaningSteps.BleachCleanStepTwo
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            MessageBox.Show("Please change container to back to sheath fluid");
+
+            //Home Z-Axis
+            var result = await HomeZAxis();
+            if (result == ErrorCode.UnknownError)
+            {
+                return result;
+            }
+
+            MessageBox.Show("Please insert sample tube with filled with 3mL of water");
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+        public async Task<ErrorCode> StopBleachClean()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Cleaning = new CleanTask
+                    {
+                        State = StopStartTaskDef.StopTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StartSamplePathWashStepOne()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Cleaning = new CleanTask
+                    {
+                        State = StopStartTaskDef.StartTask,
+                        Step = CleaningSteps.SampleWash
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            //Home Z-Axis
+            var result = await HomeZAxis();
+            if (result == ErrorCode.UnknownError)
+            {
+                return result;
+            }
+
+            MessageBox.Show("Please insert sample tube with filled with 3mL of cleaning solution");
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StartSamplePathWashStepTwo()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Cleaning = new CleanTask
+                    {
+                        State = StopStartTaskDef.StartTask,
+                        Step = CleaningSteps.SampleWash
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            //Home Z-Axis
+            var result = await HomeZAxis();
+            if (result == ErrorCode.UnknownError)
+            {
+                return result;
+            }
+
+            MessageBox.Show("Please insert sample tube with filled with 3mL of water");
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> StopSamplePathWash()
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    Cleaning = new CleanTask
+                    {
+                        State = StopStartTaskDef.StopTask
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewTargetSheathRate(float value)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetSheathRate = new SetSheathRatePID
+                    {
+                        SheathRate = value
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewTargetSampleRate(int value)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetSampleRate = new SetSampleRatePID
+                    {
+                        SampleRate = value
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewTargetSampleVelocity(int value)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetSheathSpeed = new SetSheathSpeedPID
+                    {
+                        SheathSpeed = value
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewSheathKP(float kp)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPropValvePid = new SetPropValvePID
+                    {
+                        Proportional = kp
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewSheathKI(float ki)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPropValvePid = new SetPropValvePID
+                    {
+                        Integral = ki
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewSheathKD(float kd)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPropValvePid = new SetPropValvePID
+                    {
+                        Derivative = kd
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewSampleKP(float kp)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPinchValvePid = new SetPinchValvePID
+                    {
+                        Proportional = kp
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewSampleKI(float ki)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPinchValvePid = new SetPinchValvePID
+                    {
+                        Integral = ki
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewSampleKD(float kd)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPinchValvePid = new SetPinchValvePID
+                    {
+                        Derivative = kd
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
+        public async Task<ErrorCode> SendNewPropValveBacklash(int backlash)
+        {
+            HostMessage hstMsg = new HostMessage
+            {
+                FluidicsCommand = new FluidicsCommand
+                {
+                    SetPropValveBacklash = new SetPropValveBacklashCompensation
+                    {
+                        BacklashCompensationSteps = backlash
+                    }
+                }
+            };
+
+            if (_serialControl == null)
+            {
+                return ErrorCode.UnknownError;
+            }
+
+            return await _serialControl.SendAndWaitForResult(hstMsg);
+        }
+
         /*<--------- PRIVATE --------->*/
 
 
@@ -477,7 +983,7 @@ namespace Serial_Com.Services.Devices
             }
             else if (dvcMsg.Signal != null)
             {
-                Debug.WriteLine($"Signal was: {dvcMsg.Signal}");
+                OnSignalReceived?.Invoke(this, dvcMsg.Signal);
             }
         }
     }

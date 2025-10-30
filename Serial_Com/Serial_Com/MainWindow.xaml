@@ -44,344 +44,684 @@
 
             <!--FLUIDICS CONTROL-->
             <TabItem Name="fluidicsControls" Header="Controls" FontWeight="Bold">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="Auto"/>
-                        <RowDefinition  Height="Auto"/>
-                    </Grid.RowDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <!--VALVE CONTROLS-->
-                    <GroupBox Grid.Row ="0" Grid.Column="0" Margin="13,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                        <GroupBox.Header>
-                            <Label Content="Rocker Valve Controls" FontWeight="Bold"/>
-                        </GroupBox.Header>
+                        <!--VALVE CONTROLS-->
+                        <GroupBox Grid.Row ="0" Grid.Column="0" Margin="13,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+                            <GroupBox.Header>
+                                <Label Content="Rocker Valve Controls" FontWeight="Bold"/>
+                            </GroupBox.Header>
 
-                        <StackPanel Orientation="Vertical">
-                            <CheckBox Content = "Enable Valve Controls" FontWeight="Medium" Margin="13,5,0,5" Click="EnableValveChanges"/>
+                            <StackPanel Orientation="Vertical">
+                                <CheckBox Content = "Enable Valve Controls" FontWeight="Medium" Margin="13,5,0,5" Click="EnableValveChanges"/>
 
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Vertical">
-                                    <Button Grid.Row="1" Grid.Column="0" Name="valveOneButton" Height="25" Width="100" IsEnabled="False" Tag="1" Background="Red" Margin="10" Content="Enable Valve 1" Click="ToggleValve"/>
-                                    <Button Grid.Row="2" Grid.Column="0" Name="valveTwoButton" Height="25" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
-                                    <Button Grid.Row="3" Grid.Column="0" Name="valveThreeButton" Height="25" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
-                                    <Button Grid.Row="4" Grid.Column="0" Name="valveFourButton" Height="25" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
-                                    <Button Grid.Row="5" Grid.Column="0" Name="valveFiveButton" Height="25" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Vertical">
-                                    <Button Grid.Row="1" Grid.Column="1" Name="valveSixButton" Height="25" Width="100" IsEnabled="False" Tag="6" Background="Red" Margin="10" Content="Enable Valve 6" Click="ToggleValve"/>
-                                    <Button Grid.Row="2" Grid.Column="1" Name="valveSevenButton" Height="25" Width="100" IsEnabled="False" Tag="7" Background="Red" Margin="10" Content="Enable Valve 7" Click="ToggleValve"/>
-                                    <Button Grid.Row="3" Grid.Column="1" Name="valveEightButton" Height="25" Width="100" IsEnabled="False" Tag="8" Background="Red" Margin="10" Content="Enable Valve 8" Click="ToggleValve"/>
-                                    <Button Grid.Row="4" Grid.Column="1" Name="valveNineButton" Height="25" Width="100" IsEnabled="False" Tag="9" Background="Red" Margin="10" Content="Enable Valve 9" Click="ToggleValve"/>
-                                    <Button Grid.Row="5" Grid.Column="1" Name="valveTenButton" Height="25" Width="100" IsEnabled="False" Tag="10" Background="Red" Margin="10" Content="Enable Valve 10" Click="ToggleValve"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Vertical">
+                                        <Button Grid.Row="1" Grid.Column="0" Name="valveOneButton" Height="25" Width="100" IsEnabled="False" Tag="1" Background="Red" Margin="10" Content="Enable Valve 1" Click="ToggleValve"/>
+                                        <Button Grid.Row="2" Grid.Column="0" Name="valveTwoButton" Height="25" Width="100" IsEnabled="False" Tag="2" Background="Red" Margin="10" Content="Enable Valve 2" Click="ToggleValve"/>
+                                        <Button Grid.Row="3" Grid.Column="0" Name="valveThreeButton" Height="25" Width="100" IsEnabled="False" Tag="3" Background="Red" Margin="10" Content="Enable Valve 3" Click="ToggleValve"/>
+                                        <Button Grid.Row="4" Grid.Column="0" Name="valveFourButton" Height="25" Width="100" IsEnabled="False" Tag="4" Background="Red" Margin="10" Content="Enable Valve 4" Click="ToggleValve"/>
+                                        <Button Grid.Row="5" Grid.Column="0" Name="valveFiveButton" Height="25" Width="100" IsEnabled="False" Tag="5" Background="Red" Margin="10" Content="Enable Valve 5" Click="ToggleValve"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <Button Grid.Row="1" Grid.Column="1" Name="valveSixButton" Height="25" Width="100" IsEnabled="False" Tag="6" Background="Red" Margin="10" Content="Enable Valve 6" Click="ToggleValve"/>
+                                        <Button Grid.Row="2" Grid.Column="1" Name="valveSevenButton" Height="25" Width="100" IsEnabled="False" Tag="7" Background="Red" Margin="10" Content="Enable Valve 7" Click="ToggleValve"/>
+                                        <Button Grid.Row="3" Grid.Column="1" Name="valveEightButton" Height="25" Width="100" IsEnabled="False" Tag="8" Background="Red" Margin="10" Content="Enable Valve 8" Click="ToggleValve"/>
+                                        <Button Grid.Row="4" Grid.Column="1" Name="valveNineButton" Height="25" Width="100" IsEnabled="False" Tag="9" Background="Red" Margin="10" Content="Enable Valve 9" Click="ToggleValve"/>
+                                        <Button Grid.Row="5" Grid.Column="1" Name="valveTenButton" Height="25" Width="100" IsEnabled="False" Tag="10" Background="Red" Margin="10" Content="Enable Valve 10" Click="ToggleValve"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </StackPanel>
+                        </GroupBox>
+
+                        <!--PINCH VALVE CONTROLS & PROP VALVE CONTROLS-->
+                        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                            <!--PINCH VALVE CONTROLS-->
+                            <GroupBox Margin="13,0,0,0">
+                                <GroupBox.Header>
+                                    <Label Content="Proportional Pinch Valve Controls" FontWeight="Bold"/>
+                                </GroupBox.Header>
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="homePinchValveButton" Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Home Pinch Valve" Click="HomeValve" HorizontalAlignment="Left"/>
+                                    <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="pinchValveStepCountBox" Height="25" Width="130" Margin="13,0,13,0"/>
+                                    <Button Grid.Row="1" Grid.Column="2" Name="pinchValveTakeStepsButton" Height="25" Width="80" Content="Take Steps" IsEnabled="False" Margin="13,0,13,0" Click="SendValveSteps"/>
+                                    <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="disablePinchValveButton"  Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Disable Pinch Valve" Click="DisableValve" HorizontalAlignment="Left"/>
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Current Step: " Margin="10,0,0,0"/>
+                                    <Label Grid.Row="3" Grid.Column="1" Name="pinchValveStepCount" Content="0"/>
+                                </Grid>
+                            </GroupBox>
+
+                            <!--PROP VALVE CONTROLS-->
+                            <GroupBox Margin="13,0,0,0">
+                                <GroupBox.Header>
+                                    <Label Content="Proportional Valve Controls" FontWeight="Bold"/>
+                                </GroupBox.Header>
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="homePropValveButton" Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Home Prop Valve" Click="HomeValve" HorizontalAlignment="Left"/>
+                                    <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="propValveStepCountBox" Height="25" Width="130" Margin="13,0,13,0"/>
+                                    <Button Grid.Row="1" Grid.Column="2" Name="propValveTakeStepsButton" Width="80" Content="Take Steps" IsEnabled="False" Margin="10,0,0,0" HorizontalAlignment="Left" Click="SendValveSteps"/>
+                                    <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="disablePropValveButton" Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Disable Prop Valve" Click="DisableValve" HorizontalAlignment="Left"/>
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Current Step: " Margin="13,0,0,0"/>
+                                    <Label Grid.Row="3" Grid.Column="1" Name="propValveStepCount" Content="0"/>
+                                </Grid>
+                            </GroupBox>
                         </StackPanel>
-                    </GroupBox>
 
-                    <!--PINCH VALVE CONTROLS & PROP VALVE CONTROLS-->
-                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
-                        <!--PINCH VALVE CONTROLS-->
-                        <GroupBox Margin="13,0,0,0">
-                            <GroupBox.Header>
-                                <Label Content="Proportional Pinch Valve Controls" FontWeight="Bold"/>
-                            </GroupBox.Header>
-                            <Grid>
+                        <!--SHEATH PUMP & WASTE PUMP-->
+                        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" >
+                            <!--SHEATH PUMP-->
+                            <GroupBox Margin="13,0,0,0" FontWeight="Medium" >
+                                <GroupBox.Header>
+                                    <Label Content="Sheath Pump Controls" FontWeight="Bold"/>
+                                </GroupBox.Header>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="homePinchValveButton" Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Home Pinch Valve" Click="HomeValve" HorizontalAlignment="Left"/>
-                                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="pinchValveStepCountBox" Height="25" Width="130" Margin="13,0,13,0"/>
-                                <Button Grid.Row="1" Grid.Column="2" Name="pinchValveTakeStepsButton" Height="25" Width="80" Content="Take Steps" IsEnabled="False" Margin="13,0,13,0" Click="SendValveSteps"/>
-                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="disablePinchValveButton"  Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Disable Pinch Valve" Click="DisableValve" HorizontalAlignment="Left"/>
-                                <Label Grid.Row="3" Grid.Column="0" Content="Current Step: " Margin="10,0,0,0"/>
-                                <Label Grid.Row="3" Grid.Column="1" Name="pinchValveStepCount" Content="0"/>
-                            </Grid>
-                        </GroupBox>
-
-                        <!--PROP VALVE CONTROLS-->
-                        <GroupBox Margin="13,0,0,0">
-                            <GroupBox.Header>
-                                <Label Content="Proportional Valve Controls" FontWeight="Bold"/>
-                            </GroupBox.Header>
-                            <Grid>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <Button Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Name="homePropValveButton" Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Home Prop Valve" Click="HomeValve" HorizontalAlignment="Left"/>
-                                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Name="propValveStepCountBox" Height="25" Width="130" Margin="13,0,13,0"/>
-                                <Button Grid.Row="1" Grid.Column="2" Name="propValveTakeStepsButton" Width="80" Content="Take Steps" IsEnabled="False" Margin="10,0,0,0" HorizontalAlignment="Left" Click="SendValveSteps"/>
-                                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Name="disablePropValveButton" Height="25" Width="130" IsEnabled="False" Margin="13, 13,0,13" Content="Disable Prop Valve" Click="DisableValve" HorizontalAlignment="Left"/>
-                                <Label Grid.Row="3" Grid.Column="0" Content="Current Step: " Margin="13,0,0,0"/>
-                                <Label Grid.Row="3" Grid.Column="1" Name="propValveStepCount" Content="0"/>
-                            </Grid>
-                        </GroupBox>
-                    </StackPanel>
-
-                    <!--SHEATH PUMP & WASTE PUMP-->
-                    <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2" >
-                        <!--SHEATH PUMP-->
-                        <GroupBox Margin="13,0,0,0" FontWeight="Medium" >
-                            <GroupBox.Header>
-                                <Label Content="Sheath Pump Controls" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox Name="enableSheathPumpChangesButton" Content="Enable Sheath Pump Controls" Margin="13, 5, 0, 5" Click="EnableSheathPumpChanges"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="sheathPumpOnButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
-                                    <Label Content="Sheath Pump On " Margin="5, 0, 0, 0" Tag="sheath"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="sheathPumpOffButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
-                                    <Label Content="Sheath Pump Off " Margin="5, 0, 0, 0" Tag="sheath"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="sheathPumpAutoButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
-                                    <Label Content="Sheath Pump Auto " Margin="5, 0, 0, 0" Tag="sheath"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="sheathPumpSpeedButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
-                                    <Label Content="Sheath Pump Speed Controlled" Margin="5, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Sheath Speed: " Margin="13, 0, 0, 0"/>
-                                    <Label Name="sheathSpeedValue" Content="0" Margin="13, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Slider Value: " Margin="13, 0, 0, 0"/>
-                                    <Label Name="sheathSpeedSliderValue" Content="0" Margin="13, 0, 0, 0"/>
-                                </StackPanel>
-                                <Slider Name="sheathSpeedSlider" Minimum="0" Maximum="100" Margin="13, 0, 13, 0" IsEnabled="False" Value="0" ValueChanged="PumpSliderChanged" Tag="sheathSlider" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Width="130" Height="25"  Name="sendSheathSpeedButton" Content="Send Speed" Margin="13, 5, 10, 0" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
-                                    <Ellipse Height="50" Width="50" Name="sheathSpeedIndicator" Fill="Red"/>
-                                </StackPanel>
-
-                            </StackPanel>
-                        </GroupBox>
-
-                        <!--WASTE PUMP-->
-                        <GroupBox Margin="13,0,0,0" FontWeight="Medium" >
-                            <GroupBox.Header>
-                                <Label Content="Waste Pump Controls" FontWeight="Bold"/>
-                            </GroupBox.Header>
-                            <StackPanel Orientation="Vertical">
-                                <CheckBox Name="enableWastePumpChangesButton" Content="Enable Waste Pump Controls" Margin="13, 5, 0, 5" Click="EnableWastePumpChanges"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="wastePumpOnButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
-                                    <Label Content="Waste Pump On " Margin="5, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="wastePumpOffButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
-                                    <Label Content="Waste Pump Off " Margin="5, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="wastePumpAutoButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
-                                    <Label Content="Waste Pump Auto " Margin="5, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Height="14" Width="14" Name="wastePumpSpeedButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
-                                    <Label  Content="Waste Pump Speed Controlled " Margin="5, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Waste Speed: " Margin="13, 0, 0, 0"/>
-                                    <Label Name="wasteSpeedValue" Content="0" Margin="13, 0, 0, 0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Slider Value: " Margin="13, 0, 0, 0"/>
-                                    <Label Name="wasteSpeedSliderValue" Content="0" Margin="13, 0, 0, 0"/>
-                                </StackPanel>
-                                <Slider Name="wasteSpeedSlider" Minimum="0" Maximum="100" Margin="13, 0, 13, 0" IsEnabled="False" Value="0" ValueChanged="PumpSliderChanged" Tag="wasteSlider" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Width="130" Height="25"  Name="sendWasteSpeedButton" Content="Send Speed" Margin="13, 5, 10, 0" IsEnabled="False" Tag="waste" Click="HandlePump"/>
-                                    <Ellipse Height="50" Width="50" Name="wasteSpeedIndicator" Fill="Red"/>
-                                </StackPanel>
-
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
-
-                    <!--Z-AXIS CONTROLS & SUBROUTINES-->
-                    <StackPanel Grid.Row ="0" Grid.Column="3"  Orientation="Vertical">
-                        <!--Z-AXIS CONTROLS-->
-                        <GroupBox Margin="13,0,0,0">
-                            <GroupBox.Header>
-                                <Label Content="Z-Axis Controls" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <StackPanel Orientation="Horizontal">
-                                <Slider Name="zaxisSlider" Orientation="Vertical" Margin="10" Minimum="0" Maximum="10000" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="10" LargeChange="10" ValueChanged="ZAxisSliderChanged" IsDirectionReversed="True"/>
                                 <StackPanel Orientation="Vertical">
+                                    <CheckBox Name="enableSheathPumpChangesButton" Content="Enable Sheath Pump Controls" Margin="13, 5, 0, 5" Click="EnableSheathPumpChanges"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <Label Content="Probe Depth, steps: "/>
-                                        <TextBox Width="100" Height="20" TextChanged="ZAxisTextBoxChanged" VerticalAlignment="Bottom" Margin="0,0,13,0"></TextBox>
+                                        <Button Height="14" Width="14" Name="sheathPumpOnButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
+                                        <Label Content="Sheath Pump On " Margin="5, 0, 0, 0" Tag="sheath"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <Label Content="Slider Depth: "/>
-                                        <Label Name="sliderDepthValue"  Content="0.00 mm: "/>
+                                        <Button Height="14" Width="14" Name="sheathPumpOffButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
+                                        <Label Content="Sheath Pump Off " Margin="5, 0, 0, 0" Tag="sheath"/>
                                     </StackPanel>
-                                    <Button Name="zaxisHomeButton"  Content="Home Z-Axis" Click="HomeZAxis" Margin="13, 8, 13, 8"  Height="25"/>
-                                    <Button Name="zaxisMoveButton" Content="Move" Click="MoveZAxis" Margin="13, 8, 13, 8"  Height="25"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Height="14" Width="14" Name="sheathPumpAutoButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
+                                        <Label Content="Sheath Pump Auto " Margin="5, 0, 0, 0" Tag="sheath"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Height="14" Width="14" Name="sheathPumpSpeedButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
+                                        <Label Content="Sheath Pump Speed Controlled" Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Sheath Speed: " Margin="13, 0, 0, 0"/>
+                                        <Label Name="sheathSpeedValue" Content="0" Margin="13, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Slider Value: " Margin="13, 0, 0, 0"/>
+                                        <Label Name="sheathSpeedSliderValue" Content="0" Margin="13, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <Slider Name="sheathSpeedSlider" Minimum="0" Maximum="100" Margin="13, 0, 13, 0" IsEnabled="False" Value="0" ValueChanged="PumpSliderChanged" Tag="sheathSlider" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Width="130" Height="25"  Name="sendSheathSpeedButton" Content="Send Speed" Margin="13, 5, 10, 0" IsEnabled="False" Tag="sheath" Click="HandlePump"/>
+                                        <Ellipse Height="50" Width="50" Name="sheathSpeedIndicator" Fill="Red"/>
+                                    </StackPanel>
 
-                                    <Button Name="zaxisSetHeightButton" Content="Set Height" Click="zAxisContectMenuButtonClicked" Margin="13, 8, 13, 8"  Height="25">
-                                        <Button.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Name="setTubeTop" Header="Tube Top" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                                <MenuItem Name="setTubeBottom" Header="Tube Bottom" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                                <MenuItem Name="setPlateTop" Header="Plate Top" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                                <MenuItem Name="setPlateBottom" Header="Plate Bottom" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                            </ContextMenu>
-                                        </Button.ContextMenu>
-                                    </Button>
-                                    <Button Name="zaxisMoveToSetHeightButton" Content="Move to set height" Click="zAxisContectMenuButtonClicked" Margin="13, 8, 13, 8"  Height="25">
-                                        <Button.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Name="moveTubeTop" Header="Tube Top" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                                <MenuItem Name="moveTubeBottom" Header="Tube Bottom" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                                <MenuItem Name="movePlateTop" Header="Plate Top" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                                <MenuItem Name="movePlateBottom" Header="Plate Bottom" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
-                                            </ContextMenu>
-                                        </Button.ContextMenu>
-                                    </Button>
-                                    <Button Name="zaxisEStop" Content="EStop Z-Axis" Click="EStopZAxis"  Margin="13, 8, 13, 8"  Height="25"/>
                                 </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
+                            </GroupBox>
 
-                        <!--SUBROUTINES-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Subroutines" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <!--WASTE PUMP-->
+                            <GroupBox Margin="13,0,0,0" FontWeight="Medium" >
+                                <GroupBox.Header>
+                                    <Label Content="Waste Pump Controls" FontWeight="Bold"/>
+                                </GroupBox.Header>
                                 <StackPanel Orientation="Vertical">
-                                    <Button x:Name="startStopButton" Tag="stopped" Content="Start" Height="25" Width="90" Margin="13, 8, 13, 8" Click="StartStop"/>
-                                    <Button x:Name="startupButton" Content="Startup" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                    <Button x:Name="shutdownButton" Content="Shutdown" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                    <Button x:Name="bleachCleanButton" Content="Bleach Clean" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Vertical">
-                                    <Button x:Name="sampleWashButton" Content="Sample Wash" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                    <Button x:Name="debubbleButton" Content="Debubble" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                    <Button x:Name="backFlushButton" Content="Backflush" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                    <Button x:Name="purgeFilterButton" Content="Purge Filter" Height="25" Width="90" Margin="13, 8, 13, 8"/>
-                                </StackPanel>
-                            </StackPanel>
+                                    <CheckBox Name="enableWastePumpChangesButton" Content="Enable Waste Pump Controls" Margin="13, 5, 0, 5" Click="EnableWastePumpChanges"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Height="14" Width="14" Name="wastePumpOnButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
+                                        <Label Content="Waste Pump On " Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Height="14" Width="14" Name="wastePumpOffButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
+                                        <Label Content="Waste Pump Off " Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Height="14" Width="14" Name="wastePumpAutoButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
+                                        <Label Content="Waste Pump Auto " Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Height="14" Width="14" Name="wastePumpSpeedButton" Margin="13, 0, 0, 0" Background="Red" IsEnabled="False" Tag="waste" Click="HandlePump"/>
+                                        <Label  Content="Waste Pump Speed Controlled " Margin="5, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Waste Speed: " Margin="13, 0, 0, 0"/>
+                                        <Label Name="wasteSpeedValue" Content="0" Margin="13, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Slider Value: " Margin="13, 0, 0, 0"/>
+                                        <Label Name="wasteSpeedSliderValue" Content="0" Margin="13, 0, 0, 0"/>
+                                    </StackPanel>
+                                    <Slider Name="wasteSpeedSlider" Minimum="0" Maximum="100" Margin="13, 0, 13, 0" IsEnabled="False" Value="0" ValueChanged="PumpSliderChanged" Tag="wasteSlider" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="1" LargeChange="1"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Width="130" Height="25"  Name="sendWasteSpeedButton" Content="Send Speed" Margin="13, 5, 10, 0" IsEnabled="False" Tag="waste" Click="HandlePump"/>
+                                        <Ellipse Height="50" Width="50" Name="wasteSpeedIndicator" Fill="Red"/>
+                                    </StackPanel>
 
-                        </GroupBox>
-                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
 
-                </Grid>
+                        <!--Z-AXIS CONTROLS & SUBROUTINES-->
+                        <StackPanel Grid.Row ="0" Grid.Column="3"  Orientation="Vertical">
+                            <!--Z-AXIS CONTROLS-->
+                            <GroupBox Margin="13,0,0,0">
+                                <GroupBox.Header>
+                                    <Label Content="Z-Axis Controls" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Slider Name="zaxisSlider" Orientation="Vertical" Margin="10" Minimum="0" Maximum="10000" TickFrequency="1" IsSnapToTickEnabled="True" SmallChange="10" LargeChange="10" ValueChanged="ZAxisSliderChanged" IsDirectionReversed="True"/>
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Probe Depth, steps: "/>
+                                            <TextBox Width="100" Height="20" TextChanged="ZAxisTextBoxChanged" VerticalAlignment="Bottom" Margin="0,0,13,0"></TextBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Slider Depth: "/>
+                                            <Label Name="sliderDepthValue"  Content="0.00 mm: "/>
+                                        </StackPanel>
+                                        <Button Name="zaxisHomeButton"  Content="Home Z-Axis" Click="HomeZAxis" Margin="13, 8, 13, 8"  Height="25"/>
+                                        <Button Name="zaxisMoveButton" Content="Move" Click="MoveZAxis" Margin="13, 8, 13, 8"  Height="25" IsEnabled="False"/>
+
+                                        <Button Name="zaxisSetHeightButton" Content="Set Height" Click="zAxisContectMenuButtonClicked" Margin="13, 8, 13, 8"  Height="25" IsEnabled="False">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Name="setTubeTop" Header="Tube Top" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                    <MenuItem Name="setTubeBottom" Header="Tube Bottom" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                    <MenuItem Name="setPlateTop" Header="Plate Top" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                    <MenuItem Name="setPlateBottom" Header="Plate Bottom" Click="SetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <Button Name="zaxisMoveToSetHeightButton" Content="Move to set height" Click="zAxisContectMenuButtonClicked" Margin="13, 8, 13, 8"  Height="25" IsEnabled="False">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Name="moveTubeTop" Header="Tube Top" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                    <MenuItem Name="moveTubeBottom" Header="Tube Bottom" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                    <MenuItem Name="movePlateTop" Header="Plate Top" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                    <MenuItem Name="movePlateBottom" Header="Plate Bottom" Click="MoveToSetHeight" Margin="13, 8, 13, 8"  Height="15"/>
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <Button Name="zaxisEStop" Content="EStop Z-Axis" Click="EStopZAxis"  Margin="13, 8, 13, 8"  Height="25"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!--SUBROUTINES-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Subroutines" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Vertical">
+                                        <Button x:Name="startStopButton" Tag="stopped" Content="Start" Height="25" Width="120" Margin="13, 8, 13, 8" Click="StartStop" Background="Green" IsEnabled="False"/>
+                                        <Button x:Name="startupButton" Content="Startup" Height="25" Width="120" Margin="13, 8, 13, 8" Background="Green" IsEnabled="False"/>
+                                        <Button x:Name="shutdownButton" Content="Shutdown" Height="25" Width="120" Margin="13, 8, 13, 8" Background="Green" IsEnabled="False"/>
+                                        <Button x:Name="bleachCleanButton" Content="Start Bleach Clean" Height="25" Width="120" Margin="13, 8, 13, 8" Tag="stopped" Click="BleachClean" Background="Green" IsEnabled="False"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <Button x:Name="sampleWashButton" Content="Start Sample Wash" Height="25" Width="120" Margin="13, 8, 13, 8" Tag="stopped" Click="SamplePathWash" Background="Green" IsEnabled="False"/>
+                                        <Button x:Name="debubbleButton" Content="Start Debubble" Height="25" Width="120" Margin="13, 8, 13, 8" Tag="stopped" Click="DebubbleFluidics" Background="Green" IsEnabled="False" />
+                                        <Button x:Name="backFlushButton" Content="Start Backflush" Height="25" Width="120" Margin="13, 8, 13, 8" Tag="stopped" Click="BackflushFluidics" Background="Green" IsEnabled="False"/>
+                                        <Button x:Name="purgeFilterButton" Content="Start Purge Filter" Height="25" Width="120" Margin="13, 8, 13, 8" Tag="stopped" Click="PurgeFilterFluidics" Background="Green" IsEnabled="False"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </GroupBox>
+
+                            <!--PID CONTROL-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="PID" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--SHEATH RATE-->
+                                    <Label Grid.Row ="0" Grid.Column="0" Content="Sheath Rate: "/>
+                                    <Label Grid.Row ="0" Grid.Column="1" x:Name="sheathRatePID" Content="0.0000" HorizontalContentAlignment="Right" Width="110"/>
+                                    <TextBox Grid.Row ="0" Grid.Column="2" x:Name="sheathRateInputBox" Width="120" Height="20" VerticalAlignment="Top" Margin="0,4,0,0"/>
+                                    <Button  Grid.Row ="0" Grid.Column="3" x:Name="sendSheathRateButton" Content="Change" Width="50" Height="20" Margin="13,4,0,0" VerticalAlignment="Top" Click="SendNewTargetSheathRate" IsEnabled="False"/>
+
+                                    <!--SAMPLE VELOCITY-->
+                                    <Label Grid.Row ="1" Grid.Column="0" Content="Sample Velocity: "/>
+                                    <Label Grid.Row ="1" Grid.Column="1" x:Name="sampleVelocityPID" Content="0000" HorizontalContentAlignment="Right" Width="110"/>
+                                    <TextBox  Grid.Row ="1" Grid.Column="2" x:Name="sampleVelocityInputBox" Width="120" Height="20" VerticalAlignment="Top" Margin="0,4,0,0"/>
+                                    <Button Grid.Row ="1" Grid.Column="3" x:Name="sendSampleVelocityButton" Content="Change" Width="50" Height="20" Margin="13,4,0,0" VerticalAlignment="Top" Click="SendNewTargetSampleVelocity" IsEnabled="False"/>
+
+                                    <!--SAMPLE RATE-->
+                                    <Label Grid.Row ="2" Grid.Column="0" Content="Sample Rate: "/>
+                                    <Label Grid.Row ="2" Grid.Column="1" x:Name="sampleRatePID" Content="000.0000" HorizontalContentAlignment="Right" Width="110"/>
+                                    <TextBox Grid.Row ="2" Grid.Column="2" x:Name="sampleRateInputBox" Width="120" Height="20" VerticalAlignment="Top" Margin="0,4,0,0"/>
+                                    <Button Grid.Row ="2" Grid.Column="3" x:Name="sendSampleRateButton" Content="Change" Width="50" Height="20" Margin="13,4,0,0" VerticalAlignment="Top" Click="SendNewTargetSampleRate" IsEnabled="False"/>
+                                </Grid>
+                            </GroupBox>
+
+
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Sheath PID Parameters" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Current KP: "/>
+                                    <Label Grid.Row="0" Grid.Column="1" x:Name="sheathKP" Content="0.000000"/>
+                                    <TextBox Grid.Row="0" Grid.Column="2" x:Name="sheathKPTextbox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="0" Grid.Column="3" x:Name="sendSheathKPButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewSheathKP"/>
+
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Current KI: "/>
+                                    <Label Grid.Row="1" Grid.Column="1" x:Name="sheathKI" Content="0.000000"/>
+                                    <TextBox Grid.Row="1" Grid.Column="2" x:Name="sheathKITextbox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="1" Grid.Column="3" x:Name="sendSheathKIButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewSheathKI"/>
+
+                                    <Label Grid.Row="2" Grid.Column="0" Content="Current KD: "/>
+                                    <Label Grid.Row="2" Grid.Column="1" x:Name="sheathKD" Content="0.000000"/>
+                                    <TextBox Grid.Row="2" Grid.Column="2" x:Name="sheathKDTextbox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="2" Grid.Column="3" x:Name="sendSheathKDButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewSheathKD"/>
+
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Backlash Compensation: "/>
+                                    <Label Grid.Row="3" Grid.Column="1" x:Name="propValveBacklash" Content="000"/>
+                                    <TextBox Grid.Row="3" Grid.Column="2" x:Name="propValveBacklashTextBox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="3" Grid.Column="3" x:Name="propValveBacklashButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewPropValveBacklash"/>
+                                </Grid>
+                            </GroupBox>
+
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Sample PID Parameters" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Current KP: "/>
+                                    <Label Grid.Row="0" Grid.Column="1" x:Name="sampleKP" Content="0.000000"/>
+                                    <TextBox Grid.Row="0" Grid.Column="2" x:Name="sampleKPTextbox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="0" Grid.Column="3" x:Name="sendSampleKPButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewSampleKP"/>
+
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Current KI: "/>
+                                    <Label Grid.Row="1" Grid.Column="1" x:Name="sampleKI" Content="0.000000"/>
+                                    <TextBox Grid.Row="1" Grid.Column="2" x:Name="sampleKITextbox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="1" Grid.Column="3" x:Name="sendSampleKIButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewSampleKI"/>
+
+                                    <Label Grid.Row="2" Grid.Column="0" Content="Current KD: "/>
+                                    <Label Grid.Row="2" Grid.Column="1" x:Name="sampleKD" Content="0.000000"/>
+                                    <TextBox Grid.Row="2" Grid.Column="2" x:Name="sampleKDTextbox" Height="20" Width="100" Margin="13,0,0,0"/>
+                                    <Button Grid.Row="2" Grid.Column="3" x:Name="sendSampleKDButton" Height="20" Content="Change" Margin="13,0,0,0" Click="SendNewSampleKD"/>
+                                </Grid>
+                            </GroupBox>
+
+                        </StackPanel>
+
+
+
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
-            
+
             <!--FLUIDICS INFO-->
             <TabItem Name="fluidicsRuntimeInfo" Header="Info" FontWeight="Bold">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="Auto"/>
-                        <RowDefinition  Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!--SYSTEM STATE, FLOW RATES & VALVE STATES-->
-                    <StackPanel Grid.Row ="0" Grid.Column="0" Orientation="Vertical">
-                        <!--SYSTEM STATE-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="System State" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <!--SHEATH RATE-->
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="System State: "/>
-                                <Label Name="systemState" Content="Unknown" HorizontalContentAlignment="Right" Width="70"/>
-                            </StackPanel>
-                        </GroupBox>
-
-                        <!--FLOW RATES-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Flow Rates" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                </Grid.RowDefinitions>
+                        <!--SYSTEM STATE, FLOW RATES & VALVE STATES-->
+                        <StackPanel Grid.Row ="0" Grid.Column="0" Orientation="Vertical">
+                            <!--SYSTEM STATE-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="System State" FontWeight="Bold"/>
+                                </GroupBox.Header>
 
                                 <!--SHEATH RATE-->
-                                <Label Grid.Row="0" Grid.Column="0" Content="Sheath Rate: "/>
-                                <Label Grid.Row="0" Name="sheathRate" Content="0.0000 mL/min" Margin="5,2,0,1" HorizontalContentAlignment="Right" Width="100" Grid.Column="1"/>
-                                <!--SHEATH SPEED-->
-                                <Label Grid.Row="1" Grid.Column="0" Content="Sample Velocity: "/>
-                                <Label Grid.Row="1" Name="sampleVelocity" Content="0000 mm/s" Margin="26,2,0,28" HorizontalContentAlignment="Right" Width="79" Grid.Column="1" Grid.RowSpan="2"/>
-                                <!--SAMPLE RATE-->
-                                <Label Grid.Row="2" Grid.Column="0" Content="Sample Rate: "/>
-                                <Label Grid.Row="2" Name="sampleRate" Content="0.0000 uL/min" Margin="0,2,0,28" HorizontalAlignment="Center" HorizontalContentAlignment="Right" Width="110" Grid.Column="1" Grid.RowSpan="2"/>
-                                <!--TARGET SAMPLE RATE-->
-                                <Label Grid.Row="3" Grid.Column="0" Content="Target Sample Rate: "/>
-                                <Label Grid.Row="3" Name="targetSampleRate" Content="0.0000 uL/min" Margin="0,2,0,28" HorizontalAlignment="Center" HorizontalContentAlignment="Right" Width="110" Grid.Column="1" Grid.RowSpan="2"/>
-                                <!--SHEATH RATE STABLE-->
-                                <Label Grid.Row="4" Grid.Column="0" Content="Sheath Rate Stable: "/>
-                                <Ellipse Grid.Row="4" Grid.Column="1"  Height="20" Width="20" Name="sheathRateStableIndicator" Fill="Red" Margin="20,5,0,0"/>
-                                <!--SAMPLE RATE STABLE-->
-                                <Label Grid.Row="5" Grid.Column="0" Content="Sample Rate Stable: "/>
-                                <Ellipse Grid.Row="5" Grid.Column="1"  Height="20" Width="20" Name="sampleRateStableIndicator" Fill="Red" Margin="20,5,0,0"/>
-                            </Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="System State: "/>
+                                    <Label Name="systemState" Content="Unknown" HorizontalContentAlignment="Right" Width="70"/>
+                                </StackPanel>
+                            </GroupBox>
 
-                        </GroupBox>
+                            <!--FLOW RATES-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Flow Rates" FontWeight="Bold"/>
+                                </GroupBox.Header>
 
-                        <!--VALVE STATES-->
-                        <GroupBox Margin="13, 0, 0, 0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--SHEATH RATE-->
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Sheath Rate: "/>
+                                    <Label Grid.Row="0" Name="sheathRate" Content="0.0000 mL/min" Margin="5,2,0,1" HorizontalContentAlignment="Right" Width="100" Grid.Column="1"/>
+                                    <!--SHEATH SPEED-->
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Sample Velocity: "/>
+                                    <Label Grid.Row="1" Name="sampleVelocity" Content="0000 mm/s" Margin="26,2,0,28" HorizontalContentAlignment="Right" Width="79" Grid.Column="1" Grid.RowSpan="2"/>
+                                    <!--SAMPLE RATE-->
+                                    <Label Grid.Row="2" Grid.Column="0" Content="Sample Rate: "/>
+                                    <Label Grid.Row="2" Name="sampleRate" Content="0.0000 uL/min" Margin="0,2,0,28" HorizontalAlignment="Center" HorizontalContentAlignment="Right" Width="110" Grid.Column="1" Grid.RowSpan="2"/>
+                                    <!--TARGET SAMPLE RATE-->
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Target Sample Rate: "/>
+                                    <Label Grid.Row="3" Name="targetSampleRate" Content="0.0000 uL/min" Margin="0,2,0,28" HorizontalAlignment="Center" HorizontalContentAlignment="Right" Width="110" Grid.Column="1" Grid.RowSpan="2"/>
+                                    <!--SHEATH RATE STABLE-->
+                                    <Label Grid.Row="4" Grid.Column="0" Content="Sheath Rate Stable: "/>
+                                    <Ellipse Grid.Row="4" Grid.Column="1"  Height="20" Width="20" Name="sheathRateStableIndicator" Fill="Red" Margin="20,5,0,0"/>
+                                    <!--SAMPLE RATE STABLE-->
+                                    <Label Grid.Row="5" Grid.Column="0" Content="Sample Rate Stable: "/>
+                                    <Ellipse Grid.Row="5" Grid.Column="1"  Height="20" Width="20" Name="sampleRateStableIndicator" Fill="Red" Margin="20,5,0,0"/>
+                                </Grid>
+
+                            </GroupBox>
+
+                            <!--VALVE STATES-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Valve States" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--VALVE 1 STATE-->
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Valve 1 State: "/>
+                                    <Ellipse Grid.Row="0" Grid.Column="1"  Height="20" Width="20" Name="valveOneIndicator" Fill="Red"/>
+                                    <!--VALVE 2 STATE-->
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Valve 2 State: "/>
+                                    <Ellipse Grid.Row="1" Grid.Column="1"  Height="20" Width="20" Name="valveTwoIndicator" Fill="Red"/>
+                                    <!--VALVE 3 STATE-->
+                                    <Label Grid.Row="2" Grid.Column="0" Content="Valve 3 State: "/>
+                                    <Ellipse Grid.Row="2" Grid.Column="1"  Height="20" Width="20" Name="valveThreeIndicator" Fill="Red"/>
+                                    <!--VALVE 4 STATE-->
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Valve 4 State: "/>
+                                    <Ellipse Grid.Row="3" Grid.Column="1"  Height="20" Width="20" Name="valveFourIndicator" Fill="Red"/>
+                                    <!--VALVE 5 STATE-->
+                                    <Label Grid.Row="4" Grid.Column="0" Content="Valve 5 State: "/>
+                                    <Ellipse Grid.Row="4" Grid.Column="1"  Height="20" Width="20" Name="valveFiveIndicator" Fill="Red"/>
+                                    <!--VALVE 6 STATE-->
+                                    <Label Grid.Row="0" Grid.Column="2" Content="Valve 6 State: " Margin="13,0,0,0"/>
+                                    <Ellipse Grid.Row="0" Grid.Column="3"  Height="20" Width="20" Name="valveSixIndicator" Fill="Red"/>
+                                    <!--VALVE 7 STATE-->
+                                    <Label Grid.Row="1" Grid.Column="2" Content="Valve 7 State: " Margin="13,0,0,0"/>
+                                    <Ellipse Grid.Row="1" Grid.Column="3"  Height="20" Width="20" Name="valveSevenIndicator" Fill="Red"/>
+                                    <!--VALVE 8 STATE-->
+                                    <Label Grid.Row="2" Grid.Column="2" Content="Valve 8 State: " Margin="13,0,0,0"/>
+                                    <Ellipse Grid.Row="2" Grid.Column="3"  Height="20" Width="20" Name="valveEightIndicator" Fill="Red"/>
+                                    <!--VALVE 9 STATE-->
+                                    <Label Grid.Row="3" Grid.Column="2" Content="Valve 9 State: " Margin="13,0,0,0"/>
+                                    <Ellipse Grid.Row="3" Grid.Column="3"  Height="20" Width="20" Name="valveNineIndicator" Fill="Red"/>
+                                    <!--VALVE 10 STATE-->
+                                    <Label Grid.Row="4" Grid.Column="2" Content="Valve 10 State: " Margin="13,0,0,0"/>
+                                    <Ellipse Grid.Row="4" Grid.Column="3"  Height="20" Width="20" Name="valveTenIndicator" Fill="Red"/>
+
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
+
+                        <!--VACUUM, TUBE DETECTION, FILTER & PROPORTIONAL VALVES-->
+                        <StackPanel Grid.Row ="0" Grid.Column="1" Orientation="Vertical">
+                            <!--VACUUM-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Vacuum Level" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <!--WASTE VACUUM-->
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Content="Vacuum Level: "/>
+                                    <Label Name="wasteVacuumLevel" Content="0.0000 PSI" HorizontalContentAlignment="Right"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!--TUBE DETECTION-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Tube Detection" FontWeight="Bold"/>
+                                </GroupBox.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <!--TUBE DETECTION-->
+                                    <Label Content="Tube Detection: " />
+                                    <Ellipse Height="20" Width="20" Name="tubeDetectionIndicator" Fill="Red"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!--FILTER-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Filter" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <!--FILTER CLOGGED-->
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label  Content="Filter Clogged: "/>
+                                        <Ellipse  Width="20" Height="20" Name="filterCloggedIndicator" Fill="Red"/>
+                                    </StackPanel>
+                                    <!--DIFF PRESSURE-->
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Diff Pressure Filter: "/>
+                                        <Label Name="filterDiffPressure" Content="0.000000 PSI" HorizontalContentAlignment="Right"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+
+                            </GroupBox>
+
+                            <!--PROPORTIONAL VALVES-->
+                            <GroupBox Margin="13, 2, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Proportional Valves" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <!--PINCH VALVE-->
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Pinch Valve Step Count: "/>
+                                        <Label Name="pinchValveStepPos" Content="0" HorizontalContentAlignment="Right" Width="75"/>
+                                    </StackPanel>
+                                    <!--PROP VALVE-->
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="Prop Valve Step Count: " />
+                                        <Label Name="propValveStepPos" Content="0" HorizontalContentAlignment="Right" Width="75" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+
+                        <!--LEVEL SENSORS & LEAK DETECTORS-->
+                        <StackPanel Grid.Row ="0" Grid.Column="2" Orientation="Vertical">
+                            <!--LEVEL SENSORS-->
+                            <GroupBox  Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Level Sensors" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--INTERNAL SHEATH LOW-->
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Internal Sheath Low: "/>
+                                    <Ellipse Grid.Row="0" Grid.Column="1" Height="20" Width="20" Name="internalSheathLowIndicator" Fill="Red"/>
+                                    <!--INTERNAL WASTE HIGH-->
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Internal Waste High: "/>
+                                    <Ellipse Grid.Row= "1" Grid.Column="1" Height="20" Width="20" Name="internalWasteHighIndicator" Fill="Red"/>
+                                    <!--EXTERNAL SHEATH LOW-->
+                                    <Label Grid.Row="2" Grid.Column="0" Content="External Sheath Low: "/>
+                                    <Ellipse Grid.Row="2" Grid.Column="1" Height="20" Width="20" Name="externalSheathLowIndicator" Fill="Red"/>
+                                    <!--EXTERNAL SHEATH CONNECTED-->
+                                    <Label Grid.Row="3" Grid.Column="0"  Content="External Sheath Connected: "/>
+                                    <Ellipse Grid.Row="3" Grid.Column="1"  Height="20" Width="20" Name="externalSheathConnectedIndicator" Fill="Red"/>
+                                    <!--EXTERNAL WASTE HIGH-->
+                                    <Label Grid.Row="4" Grid.Column="0" Content="External Waste High: " />
+                                    <Ellipse Grid.Row= "4" Grid.Column="1" Height="20" Width="20" Name="externalWasteHighIndicator" Fill="Red"/>
+                                    <!--EXTERNAL WASTE CONNECTED-->
+                                    <Label Grid.Row="5" Grid.Column="0" Content="External Waste Connected: "/>
+                                    <Ellipse Grid.Row="5" Grid.Column="1"  Height="20" Width="20" Name="externalWasteConnectedIndicator" Fill="Red"/>
+                                </Grid>
+                            </GroupBox>
+
+                            <!--LEAK DETECTORS-->
+                            <GroupBox Margin="13, 0, 0, 0">
+                                <GroupBox.Header>
+                                    <Label Content="Leak Detectors" FontWeight="Bold"/>
+                                </GroupBox.Header>
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition  Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--LEAK DETCTOR ONE STATE-->
+                                    <Label Grid.Row="0" Grid.Column="0" Content="Leak Detector One State: "/>
+                                    <Ellipse Grid.Row="0" Grid.Column="1" Height="20" Width="20" Name="leakDetectorOneStateIndicator" Fill="red"/>
+                                    <!--LEAK DETCTOR ONE CONNECTED-->
+                                    <Label Grid.Row="1" Grid.Column="0" Content="Leak Detector One Connected: "/>
+                                    <Ellipse Grid.Row="1" Grid.Column="1" Height="20" Width="20" Name="leakDetectorOneConnectedIndicator" Fill="red"/>
+                                    <!--LEAK DETCTOR TWO STATE-->
+                                    <Label Grid.Row="2" Grid.Column="0" Content="Leak Detector Two State: "/>
+                                    <Ellipse Grid.Row="2" Grid.Column="1" Height="20" Width="20" Name="leakDetectorTwoStateIndicator" Fill="red"/>
+                                    <!--LEAK DETCTOR TWO CONNECTED-->
+                                    <Label Grid.Row="3" Grid.Column="0" Content="Leak Detector Two Connected: "/>
+                                    <Ellipse Grid.Row="3" Grid.Column="1" Height="20" Width="20" Name="leakDetectorTwoConnectedIndicator" Fill="red"/>
+                                    <!--LEAK DETCTOR THREE STATE-->
+                                    <Label Grid.Row="4" Grid.Column="0" Content="Leak Detector Two State: "/>
+                                    <Ellipse Grid.Row="4" Grid.Column="1" Height="20" Width="20" Name="leakDetectorThreeStateIndicator" Fill="red"/>
+                                    <!--LEAK DETCTOR THREE CONNECTED-->
+                                    <Label Grid.Row="5" Grid.Column="0" Content="Leak Detector Two Connected: "/>
+                                    <Ellipse Grid.Row="5" Grid.Column="1" Height="20" Width="20" Name="leakDetectorThreeConnectedIndicator" Fill="red"/>
+                                </Grid>
+                            </GroupBox>
+                        </StackPanel>
+
+                        <!--PUMPS-->
+                        <GroupBox Grid.Row ="0" Grid.Column="3" Margin="13, 0, 0, 0" VerticalAlignment="Top">
                             <GroupBox.Header>
-                                <Label Content="Valve States" FontWeight="Bold"/>
+                                <Label Content="Sheath and Waste Pumps" FontWeight="Bold"/>
                             </GroupBox.Header>
 
                             <Grid>
@@ -397,302 +737,86 @@
                                     <RowDefinition  Height="Auto"/>
                                     <RowDefinition  Height="Auto"/>
                                     <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <!--VALVE 1 STATE-->
-                                <Label Grid.Row="0" Grid.Column="0" Content="Valve 1 State: "/>
-                                <Ellipse Grid.Row="0" Grid.Column="1"  Height="20" Width="20" Name="valveOneIndicator" Fill="Red"/>
-                                <!--VALVE 2 STATE-->
-                                <Label Grid.Row="1" Grid.Column="0" Content="Valve 2 State: "/>
-                                <Ellipse Grid.Row="1" Grid.Column="1"  Height="20" Width="20" Name="valveTwoIndicator" Fill="Red"/>
-                                <!--VALVE 3 STATE-->
-                                <Label Grid.Row="2" Grid.Column="0" Content="Valve 3 State: "/>
-                                <Ellipse Grid.Row="2" Grid.Column="1"  Height="20" Width="20" Name="valveThreeIndicator" Fill="Red"/>
-                                <!--VALVE 4 STATE-->
-                                <Label Grid.Row="3" Grid.Column="0" Content="Valve 4 State: "/>
-                                <Ellipse Grid.Row="3" Grid.Column="1"  Height="20" Width="20" Name="valveFourIndicator" Fill="Red"/>
-                                <!--VALVE 5 STATE-->
-                                <Label Grid.Row="4" Grid.Column="0" Content="Valve 5 State: "/>
-                                <Ellipse Grid.Row="4" Grid.Column="1"  Height="20" Width="20" Name="valveFiveIndicator" Fill="Red"/>
-                                <!--VALVE 6 STATE-->
-                                <Label Grid.Row="0" Grid.Column="2" Content="Valve 6 State: " Margin="13,0,0,0"/>
-                                <Ellipse Grid.Row="0" Grid.Column="3"  Height="20" Width="20" Name="valveSixIndicator" Fill="Red"/>
-                                <!--VALVE 7 STATE-->
-                                <Label Grid.Row="1" Grid.Column="2" Content="Valve 7 State: " Margin="13,0,0,0"/>
-                                <Ellipse Grid.Row="1" Grid.Column="3"  Height="20" Width="20" Name="valveSevenIndicator" Fill="Red"/>
-                                <!--VALVE 8 STATE-->
-                                <Label Grid.Row="2" Grid.Column="2" Content="Valve 8 State: " Margin="13,0,0,0"/>
-                                <Ellipse Grid.Row="2" Grid.Column="3"  Height="20" Width="20" Name="valveEightIndicator" Fill="Red"/>
-                                <!--VALVE 9 STATE-->
-                                <Label Grid.Row="3" Grid.Column="2" Content="Valve 9 State: " Margin="13,0,0,0"/>
-                                <Ellipse Grid.Row="3" Grid.Column="3"  Height="20" Width="20" Name="valveNineIndicator" Fill="Red"/>
-                                <!--VALVE 10 STATE-->
-                                <Label Grid.Row="4" Grid.Column="2" Content="Valve 10 State: " Margin="13,0,0,0"/>
-                                <Ellipse Grid.Row="4" Grid.Column="3"  Height="20" Width="20" Name="valveTenIndicator" Fill="Red"/>
+                                <!--SHEATH PUMP STATE-->
+                                <Label Grid.Row="0" Grid.Column="0" Content="Sheath Pump State: "/>
+                                <Ellipse Grid.Row="0" Grid.Column="1" Height="20" Width="20" Name="sheathPumpStateIndicator" Fill="Red" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <!--SHEATH PUMP MODE-->
+                                <Label Grid.Row="1" Grid.Column="0" Content="Sheath Pump Mode: "/>
+                                <Label Grid.Row="1" Grid.Column="1" Name="sheathPumpMode" Content="Off" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <!--SHEATH PUMP SPEED-->
+                                <Label Grid.Row="2" Grid.Column="0" Content="Sheath Pump Speed: "/>
+                                <Label Grid.Row="2" Grid.Column="1" Name="sheathPumpSpeed" Content="0%" HorizontalContentAlignment="Right" Width="41"  Margin="0,0,10,0"/>
+                                <!--WASTE PUMP STATE-->
+                                <Label Grid.Row="0" Grid.Column="2" Content="Waste Pump State: "/>
+                                <Ellipse Grid.Row="0" Grid.Column="3"  Height="20" Width="20" Name="wastePumpStateIndicator" Fill="Red" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <!--WASTE PUMP MODE-->
+                                <Label Grid.Row="1" Grid.Column="2" Content="Waste Pump Mode: "/>
+                                <Label Grid.Row="1" Grid.Column="3" Name="wastePumpMode" Content="Off" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                <!--WASTE PUMP SPEED-->
+                                <Label Grid.Row="2" Grid.Column="2" Content="Waste Pump Speed: "/>
+                                <Label Grid.Row="2" Grid.Column="3" Name="wastePumpSpeed" Content="0%" HorizontalContentAlignment="Right" Width="41" Margin="0,0,10,0"/>
 
                             </Grid>
                         </GroupBox>
-                    </StackPanel>
-
-                    <!--VACUUM, TUBE DETECTION, FILTER & PROPORTIONAL VALVES-->
-                    <StackPanel Grid.Row ="0" Grid.Column="1" Orientation="Vertical">
-                        <!--VACUUM-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Vacuum Level" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <!--WASTE VACUUM-->
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="Vacuum Level: "/>
-                                <Label Name="wasteVacuumLevel" Content="0.0000 PSI" HorizontalContentAlignment="Right"/>
-                            </StackPanel>
-                        </GroupBox>
-
-                        <!--TUBE DETECTION-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Tube Detection" FontWeight="Bold"/>
-                            </GroupBox.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <!--TUBE DETECTION-->
-                                <Label Content="Tube Detection: " />
-                                <Ellipse Height="20" Width="20" Name="tubeDetectionIndicator" Fill="Red"/>
-                            </StackPanel>
-                        </GroupBox>
-
-                        <!--FILTER-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Filter" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <!--FILTER CLOGGED-->
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label  Content="Filter Clogged: "/>
-                                    <Ellipse  Width="20" Height="20" Name="filterCloggedIndicator" Fill="Red"/>
-                                </StackPanel>
-                                <!--DIFF PRESSURE-->
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Diff Pressure Filter: "/>
-                                    <Label Name="filterDiffPressure" Content="0.000000 PSI" HorizontalContentAlignment="Right"/>
-                                </StackPanel>
-                            </StackPanel>
-
-
-                        </GroupBox>
-
-                        <!--PROPORTIONAL VALVES-->
-                        <GroupBox Margin="13, 2, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Proportional Valves" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <!--PINCH VALVE-->
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Pinch Valve Step Count: "/>
-                                    <Label Name="pinchValveStepPos" Content="0" HorizontalContentAlignment="Right" Width="75"/>
-                                </StackPanel>
-                                <!--PROP VALVE-->
-                                <StackPanel Orientation="Horizontal">
-                                    <Label Content="Prop Valve Step Count: " />
-                                    <Label Name="propValveStepPos" Content="0" HorizontalContentAlignment="Right" Width="75" />
-                                </StackPanel>
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
-
-                    <!--LEVEL SENSORS & LEAK DETECTORS-->
-                    <StackPanel Grid.Row ="0" Grid.Column="2" Orientation="Vertical">
-                        <!--LEVEL SENSORS-->
-                        <GroupBox  Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Level Sensors" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!--INTERNAL SHEATH LOW-->
-                                <Label Grid.Row="0" Grid.Column="0" Content="Internal Sheath Low: "/>
-                                <Ellipse Grid.Row="0" Grid.Column="1" Height="20" Width="20" Name="internalSheathLowIndicator" Fill="Red"/>
-                                <!--INTERNAL WASTE HIGH-->
-                                <Label Grid.Row="1" Grid.Column="0" Content="Internal Waste High: "/>
-                                <Ellipse Grid.Row= "1" Grid.Column="1" Height="20" Width="20" Name="internalWasteHighIndicator" Fill="Red"/>
-                                <!--EXTERNAL SHEATH LOW-->
-                                <Label Grid.Row="2" Grid.Column="0" Content="External Sheath Low: "/>
-                                <Ellipse Grid.Row="2" Grid.Column="1" Height="20" Width="20" Name="externalSheathLowIndicator" Fill="Red"/>
-                                <!--EXTERNAL SHEATH CONNECTED-->
-                                <Label Grid.Row="3" Grid.Column="0"  Content="External Sheath Connected: "/>
-                                <Ellipse Grid.Row="3" Grid.Column="1"  Height="20" Width="20" Name="externalSheathConnectedIndicator" Fill="Red"/>
-                                <!--EXTERNAL WASTE HIGH-->
-                                <Label Grid.Row="4" Grid.Column="0" Content="External Waste High: " />
-                                <Ellipse Grid.Row= "4" Grid.Column="1" Height="20" Width="20" Name="externalWasteHighIndicator" Fill="Red"/>
-                                <!--EXTERNAL WASTE CONNECTED-->
-                                <Label Grid.Row="5" Grid.Column="0" Content="External Waste Connected: "/>
-                                <Ellipse Grid.Row="5" Grid.Column="1"  Height="20" Width="20" Name="externalWasteConnectedIndicator" Fill="Red"/>
-                            </Grid>
-                        </GroupBox>
-
-                        <!--LEAK DETECTORS-->
-                        <GroupBox Margin="13, 0, 0, 0">
-                            <GroupBox.Header>
-                                <Label Content="Leak Detectors" FontWeight="Bold"/>
-                            </GroupBox.Header>
-
-                            <Grid>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                    <RowDefinition  Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!--LEAK DETCTOR ONE STATE-->
-                                <Label Grid.Row="0" Grid.Column="0" Content="Leak Detector One State: "/>
-                                <Ellipse Grid.Row="0" Grid.Column="1" Height="20" Width="20" Name="leakDetectorOneStateIndicator" Fill="red"/>
-                                <!--LEAK DETCTOR ONE CONNECTED-->
-                                <Label Grid.Row="1" Grid.Column="0" Content="Leak Detector One Connected: "/>
-                                <Ellipse Grid.Row="1" Grid.Column="1" Height="20" Width="20" Name="leakDetectorOneConnectedIndicator" Fill="red"/>
-                                <!--LEAK DETCTOR TWO STATE-->
-                                <Label Grid.Row="2" Grid.Column="0" Content="Leak Detector Two State: "/>
-                                <Ellipse Grid.Row="2" Grid.Column="1" Height="20" Width="20" Name="leakDetectorTwoStateIndicator" Fill="red"/>
-                                <!--LEAK DETCTOR TWO CONNECTED-->
-                                <Label Grid.Row="3" Grid.Column="0" Content="Leak Detector Two Connected: "/>
-                                <Ellipse Grid.Row="3" Grid.Column="1" Height="20" Width="20" Name="leakDetectorTwoConnectedIndicator" Fill="red"/>
-                                <!--LEAK DETCTOR THREE STATE-->
-                                <Label Grid.Row="4" Grid.Column="0" Content="Leak Detector Two State: "/>
-                                <Ellipse Grid.Row="4" Grid.Column="1" Height="20" Width="20" Name="leakDetectorThreeStateIndicator" Fill="red"/>
-                                <!--LEAK DETCTOR THREE CONNECTED-->
-                                <Label Grid.Row="5" Grid.Column="0" Content="Leak Detector Two Connected: "/>
-                                <Ellipse Grid.Row="5" Grid.Column="1" Height="20" Width="20" Name="leakDetectorThreeConnectedIndicator" Fill="red"/>
-                            </Grid>
-                        </GroupBox>
-                    </StackPanel>
-
-                    <!--PUMPS-->
-                    <GroupBox Grid.Row ="0" Grid.Column="3" Margin="13, 0, 0, 0" VerticalAlignment="Top">
-                        <GroupBox.Header>
-                            <Label Content="Sheath and Waste Pumps" FontWeight="Bold"/>
-                        </GroupBox.Header>
-
-                        <Grid>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Grid.RowDefinitions>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                                <RowDefinition  Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <!--SHEATH PUMP STATE-->
-                            <Label Grid.Row="0" Grid.Column="0" Content="Sheath Pump State: "/>
-                            <Ellipse Grid.Row="0" Grid.Column="1" Height="20" Width="20" Name="sheathPumpStateIndicator" Fill="Red" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                            <!--SHEATH PUMP MODE-->
-                            <Label Grid.Row="1" Grid.Column="0" Content="Sheath Pump Mode: "/>
-                            <Label Grid.Row="1" Grid.Column="1" Name="sheathPumpMode" Content="Off" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                            <!--SHEATH PUMP SPEED-->
-                            <Label Grid.Row="2" Grid.Column="0" Content="Sheath Pump Speed: "/>
-                            <Label Grid.Row="2" Grid.Column="1" Name="sheathPumpSpeed" Content="0%" HorizontalContentAlignment="Right" Width="41"  Margin="0,0,10,0"/>
-                            <!--WASTE PUMP STATE-->
-                            <Label Grid.Row="0" Grid.Column="2" Content="Waste Pump State: "/>
-                            <Ellipse Grid.Row="0" Grid.Column="3"  Height="20" Width="20" Name="wastePumpStateIndicator" Fill="Red" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                            <!--WASTE PUMP MODE-->
-                            <Label Grid.Row="1" Grid.Column="2" Content="Waste Pump Mode: "/>
-                            <Label Grid.Row="1" Grid.Column="3" Name="wastePumpMode" Content="Off" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                            <!--WASTE PUMP SPEED-->
-                            <Label Grid.Row="2" Grid.Column="2" Content="Waste Pump Speed: "/>
-                            <Label Grid.Row="2" Grid.Column="3" Name="wastePumpSpeed" Content="0%" HorizontalContentAlignment="Right" Width="41" Margin="0,0,10,0"/>
-
-                        </Grid>
-                    </GroupBox>
-
-
-                </Grid>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
 
             <!--PLOTS-->
             <TabItem Name="Graphs" Header="Graphs" FontWeight="Bold">
-                <Grid>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="*"/>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition  Height="Auto"/>
-                        <RowDefinition  Height="*"/>
-                        <RowDefinition  Height="Auto"/>
-                        <RowDefinition  Height="*"/>
-                    </Grid.RowDefinitions>
+                        <!--SAMPLE VELOCITY PLOT-->
+                        <ScottPlot:WpfPlot Grid.Row="1" Grid.Column="0" Name="sampleVelocityPlot"/>
+                        <StackPanel Grid.Row="0" Grid.Column="0"  Orientation="Horizontal">
+                            <Label Content="Sample Velocity: " Margin="50,10,0,0" VerticalAlignment="Center"/>
+                            <Label x:Name="sampleVelocityGraphValue"  Content="0 mm/sec" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="92"/>
+                            <Button x:Name="sampleVelocityRateAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                            <CheckBox x:Name="sampleVelocityPlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,18,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                        </StackPanel>
 
-                    <!--SHEATH RATE PLOT-->
-                    <ScottPlot:WpfPlot Grid.Row="1" Grid.Column="0" Name="sheathRatePlot"/>
-                    <StackPanel Grid.Row="0" Grid.Column="0"  Orientation="Horizontal">
-                        <Label Content="Sheath Rate: " Margin="50,10,0,0" VerticalAlignment="Center"/>
-                        <Label x:Name="sheathRateGraphValue"  Content="0.0000 mL/min" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Width="100"/>
-                        <Button x:Name="sheathRateAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
-                        <CheckBox x:Name="sheathRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,15,0,0" VerticalAlignment="Center" IsChecked="True"/>
-                    </StackPanel>
-                    
-                    <!--SAMPLE VELOCITY PLOT-->
-                    <ScottPlot:WpfPlot Grid.Row="1" Grid.Column="1" Name="sampleVelocityPlot"/>
-                    <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal">
-                        <Label Content="Sample Velocity: " Margin="50,10,0,0" VerticalAlignment="Center"/>
-                        <Label x:Name="sampleVelocityGraphValue"  Content="0 mm/sec" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="92"/>
-                        <Button x:Name="sampleVelocityRateAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
-                        <CheckBox x:Name="sampleVelocityPlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,18,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    </StackPanel>
+                        <!--SAMPLE RATE PLOT-->
+                        <ScottPlot:WpfPlot Grid.Row="3" Grid.Column="0" Name="sampleRatePlot"/>
+                        <StackPanel Grid.Row="2" Grid.Column="0"  Orientation="Horizontal">
+                            <Label Content="Sample Rate: " Margin="50,10,0,0" VerticalAlignment="Center"/>
+                            <Label x:Name="sampleRateGraphValue"  Content="0.0000 uL/min" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Width="120"/>
+                            <Button x:Name="sampleRateAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                            <CheckBox x:Name="sampleRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,18,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                        </StackPanel>
 
-                    <!--SAMPLE RATE PLOT-->
-                    <ScottPlot:WpfPlot Grid.Row="3" Grid.Column="0" Name="sampleRatePlot"/>
-                    <StackPanel Grid.Row="2" Grid.Column="0"  Orientation="Horizontal">
-                        <Label Content="Sample Rate: " Margin="50,10,0,0" VerticalAlignment="Center"/>
-                        <Label x:Name="sampleRateGraphValue"  Content="0.0000 uL/min" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Width="120"/>
-                        <Button x:Name="sampleRateAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
-                        <CheckBox x:Name="sampleRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,18,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    </StackPanel>
+                        <!--SHEATH RATE PLOT-->
+                        <ScottPlot:WpfPlot Grid.Row="1" Grid.Column="1" Name="sheathRatePlot"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1"  Orientation="Horizontal">
+                            <Label Content="Sheath Rate: " Margin="50,10,0,0" VerticalAlignment="Center"/>
+                            <Label x:Name="sheathRateGraphValue"  Content="0.0000 mL/min" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" Width="100"/>
+                            <Button x:Name="sheathRateAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                            <CheckBox x:Name="sheathRatePlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,15,0,0" VerticalAlignment="Center" IsChecked="True"/>
+                        </StackPanel>
 
-                    <!--VACUUM LEVEL PLOT-->
-                    <ScottPlot:WpfPlot Grid.Row="3" Grid.Column="1" Name="vacuumLevelPlot"/>
-                    <StackPanel Grid.Row="2" Grid.Column="1"  Orientation="Horizontal">
-                        <Label Content="Vacuum Level: " Margin="50,10,0,0" VerticalAlignment="Center"/>
-                        <Label x:Name="vacuumLevelGraphValue"  Content="0.000000 PSI" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="89"/>
-                        <Button x:Name="vacuumAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
-                        <CheckBox x:Name="vacuumPlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,18,0,0" VerticalAlignment="Top" IsChecked="True"/>
-                    </StackPanel>
-                </Grid>
+                        <!--VACUUM LEVEL PLOT-->
+                        <ScottPlot:WpfPlot Grid.Row="3" Grid.Column="1" Name="vacuumLevelPlot"/>
+                        <StackPanel Grid.Row="2" Grid.Column="1"  Orientation="Horizontal">
+                            <Label Content="Vacuum Level: " Margin="50,10,0,0" VerticalAlignment="Center"/>
+                            <Label x:Name="vacuumLevelGraphValue"  Content="0.000000 PSI" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Width="89"/>
+                            <Button x:Name="vacuumAutoScaleButton" Content="Reset Scale" Margin="20,10,0,0" VerticalAlignment="Center" Width="80" Click="OnResetScaleGraphClicked"/>
+                            <CheckBox x:Name="vacuumPlotAutoScroll" Content="Auto Scroll X-Axis" Margin="20,18,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
             </TabItem>
         </dragablz:TabablzControl>
     </GroupBox>

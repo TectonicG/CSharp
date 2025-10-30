@@ -111,10 +111,16 @@ namespace Serial_Com.Services.Cobs
             while (i < s.Length)
             {
                 byte code = s[i++];
-                if (code == 0) throw new FormatException("Invalid COBS code byte (0).");
+                if (code == 0)
+                {
+                    throw new FormatException("Invalid COBS code byte (0).");
+                }
 
                 int copyLen = code - 1;
-                if (i + copyLen > s.Length) throw new FormatException("COBS code exceeds frame length.");
+                if (i + copyLen > s.Length)
+                {
+                    throw new FormatException("COBS code exceeds frame length.");
+                }
 
                 for (int k = 0; k < copyLen; k++) output.Add(s[i + k]);
                 i += copyLen;
@@ -125,18 +131,5 @@ namespace Serial_Com.Services.Cobs
 
             return output.ToArray();
         }
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
 }

@@ -60,9 +60,9 @@ namespace Serial_Com
             InitializeComponent();
 
             //Add lookupable limits to graphs
-            graphYAxisLimits.Add(sheathRatePlot.Plot, (-5.5, 5.5));
-            graphYAxisLimits.Add(sampleVelocityPlot.Plot, (-3666, 3666));
-            graphYAxisLimits.Add(sampleRatePlot.Plot, (-120.0, 120.0));
+            graphYAxisLimits.Add(sheathRatePlot.Plot, (-5.5 - 0.5, 5.5 + 0.5));
+            graphYAxisLimits.Add(sampleVelocityPlot.Plot, (-3666 - 200, 3666 + 200));
+            graphYAxisLimits.Add(sampleRatePlot.Plot, (-120.0 - 20, 120.0 + 20));
             graphYAxisLimits.Add(vacuumLevelPlot.Plot, (-5.5, 1));
 
 
@@ -70,6 +70,7 @@ namespace Serial_Com
             fluidics = new Fluidics();
             fluidics.ConnectionChanged += OnFluidicsConnectionChanged;
             fluidics.OnQueryFlowRecieved += OnQueryFlowRecieved;
+            fluidics.OnSignalReceived += OnSignalRecieved;
 
             InitPlots();
         }
@@ -328,6 +329,93 @@ namespace Serial_Com
             }
         }
 
+        private void OnSignalRecieved(object? sender, Signal signal)
+        {
+            Dispatcher.Invoke(async () =>
+            {
+                if (signal == null)
+                {
+                    return;
+                }
+
+                var sig = signal.FluidicsSignal;
+
+                switch (sig)
+                {
+                    //Debubble
+                    case FluidicsSignals.DebubbleTaskComplete:
+                        debubbleButton.Tag = "stopped";
+                        debubbleButton.Content = "Start Debubble";
+                        debubbleButton.Background = Brushes.Green;
+                        break;
+                    case FluidicsSignals.UnableToCompleteDebubble:
+                        debubbleButton.Tag = "stopped";
+                        debubbleButton.Content = "Start Debubble";
+                        debubbleButton.Background = Brushes.Green;
+                        break;
+                    //Backflush
+                    case FluidicsSignals.BackFlushTaskComplete:
+                        backFlushButton.Tag = "stopped";
+                        backFlushButton.Content = "Start Backflush";
+                        backFlushButton.Background = Brushes.Green;
+                        break;
+                    //Purge Filter
+                    case FluidicsSignals.PurgeFilterTaskComplete:
+                        purgeFilterButton.Tag = "stopped";
+                        purgeFilterButton.Content = "Start Purge Filter";
+                        purgeFilterButton.Background = Brushes.Green;
+                        break;
+                    case FluidicsSignals.UnableToCompletePurgeFilter:
+                        purgeFilterButton.Tag = "stopped";
+                        purgeFilterButton.Content = "Start Purge Filter";
+                        purgeFilterButton.Background = Brushes.Green;
+                        break;
+                    case FluidicsSignals.CleaningStepComplete:
+                        if (bleachCleanButton.Tag.ToString() == "stepOne")
+                        {
+                            var result = await fluidics.BleachCleanStepTwo();
+                            if (result == ErrorCode.Ok)
+                            {
+                                bleachCleanButton.Tag = "stepTwo";
+                                bleachCleanButton.Content = "Stop Bleach Clean";
+                                bleachCleanButton.Background = Brushes.Red;
+                            }
+                        }
+                        else if (bleachCleanButton.Tag.ToString() == "stepTwo")
+                        {
+                            bleachCleanButton.Tag = "stopped";
+                            bleachCleanButton.Content = "Start Bleach Clean";
+                            bleachCleanButton.Background = Brushes.Green;
+                            MessageBox.Show("Bleach clean Complete");
+                        }
+                        else if (sampleWashButton.Tag.ToString() == "stepOne")
+                        {
+                            var result = await fluidics.StartSamplePathWashStepTwo();
+                            if (result == ErrorCode.Ok)
+                            {
+                                sampleWashButton.Tag = "stepTwo";
+                                sampleWashButton.Content = "Stop Sample Wash";
+                                sampleWashButton.Background = Brushes.Red;
+                            }
+                        }
+                        else if (sampleWashButton.Tag.ToString() == "stepTwo")
+                        {
+                            sampleWashButton.Tag = "stopped";
+                            sampleWashButton.Content = "Start Sample Wash";
+                            sampleWashButton.Background = Brushes.Green;
+                            MessageBox.Show("Sam ple Wash Complete");
+                        }
+                        break;
+                    case FluidicsSignals.CleaningStepFailed:
+                        bleachCleanButton.Tag = "stopped";
+                        bleachCleanButton.Content = "Start Bleach Clean";
+                        bleachCleanButton.Background = Brushes.Green;
+                        MessageBox.Show("Bleach clean failed");
+                        break;
+                }
+            });
+        }
+
         private void OnQueryFlowRecieved(object? sender, FluidicsSystemInfo info)
         {
             Dispatcher.Invoke(() =>
@@ -356,20 +444,26 @@ namespace Serial_Com
             var _sampleRate = info.SampleRate;
 
             //Comment out or delete later:
-            _sheathRate = _rndm.NextSingle() * (float)5.5;
-            _sampleVelocity = _rndm.Next(0, 3666);
-            _sampleRate = _rndm.NextSingle() * 120;
+            //_sheathRate = _rndm.NextSingle() * (float)5.5;
+            //_sampleVelocity = _rndm.Next(0, 3666);
+            //_sampleRate = _rndm.NextSingle() * 120;
 
             var sheathRateFormat = $"{_sheathRate:F4} mL/min";
             var sampleVelocityFormat = $"{_sampleVelocity} mm/s";
             var sampleRateFormat = $"{_sampleRate:F4} uL/min";
 
             sheathRate.Content = sheathRateFormat;
+            sheathRatePID.Content = sheathRateFormat;
             sheathRateGraphValue.Content = sheathRateFormat;
+
             sampleVelocity.Content = sampleVelocityFormat;
+            sampleVelocityPID.Content = sampleVelocityFormat;
             sampleVelocityGraphValue.Content = sampleVelocityFormat;
+
             sampleRate.Content = sampleRateFormat;
+            sampleRatePID.Content = sampleRateFormat;
             sampleRateGraphValue.Content = sampleRateFormat;
+
             targetSampleRate.Content = $"{info.TargetSample} uL/min";
             sheathRateStableIndicator.Fill = info.SheathRateUnstable == 1 ? Brushes.Green : Brushes.Red;
             sampleRateStableIndicator.Fill = info.SampleRateUnstable == 1 ? Brushes.Green : Brushes.Red;
@@ -378,7 +472,7 @@ namespace Serial_Com
             //Vacuum Level
             var _vacLevel = info.WasteVacuumLevel;
             //Comment out or delete later:
-            _vacLevel = _rndm.NextSingle() * (float)-5.0;
+            //_vacLevel = _rndm.NextSingle() * (float)-5.0;
             var vacLevelFormat = $"{_vacLevel:F6} PSI";
             vacuumLevelGraphValue.Content = vacLevelFormat;
             wasteVacuumLevel.Content = vacLevelFormat;
@@ -524,6 +618,15 @@ namespace Serial_Com
                     break;
             }
 
+            sheathKP.Content = info.SheathKp;
+            sheathKI.Content = info.SheathKi;
+            sheathKD.Content = info.SheathKd;
+            propValveBacklash.Content = info.PropValveBacklashCompensation;
+
+            sampleKP.Content = info.SampleKp;
+            sampleKI.Content = info.SampleKi;
+            sampleKD.Content = info.SampleKd;
+
         }
 
         private async void ToggleValve(object? sender, RoutedEventArgs e)
@@ -560,6 +663,12 @@ namespace Serial_Com
                 SetComPortEnabled(connected);
                 SetPropValveEnabled(connected);
                 SetPinchValveEnabled(connected);
+                if (!connected)
+                {
+                    SetSubroutineButtons(connected);
+                    SetZAxisButtons(connected);
+                    SetPIDButtons(connected);
+                }
             });
 
         }
@@ -678,6 +787,32 @@ namespace Serial_Com
                 wasteSpeedSliderValue.Content = "0";
                 wasteSpeedIndicator.Fill = Brushes.Red;
             }
+        }
+
+        private void SetSubroutineButtons(bool enabled)
+        {
+            startStopButton.IsEnabled = enabled;
+            //startupButton.IsEnabled = enabled;
+            //shutdownButton.IsEnabled = enabled;
+            bleachCleanButton.IsEnabled = enabled;
+            sampleWashButton.IsEnabled = enabled;
+            debubbleButton.IsEnabled = enabled;
+            backFlushButton.IsEnabled = enabled;
+            purgeFilterButton.IsEnabled = enabled;
+        }
+
+        private void SetZAxisButtons(bool enabled)
+        {
+            zaxisMoveButton.IsEnabled = enabled;
+            zaxisMoveToSetHeightButton.IsEnabled = enabled;
+            zaxisSetHeightButton.IsEnabled = enabled;
+        }
+
+        private void SetPIDButtons(bool enabled)
+        {
+            sendSheathRateButton.IsEnabled = enabled;
+            sendSampleVelocityButton.IsEnabled = enabled;
+            sendSampleRateButton.IsEnabled = enabled;
         }
 
         private void PumpSliderChanged(object? sender, RoutedEventArgs e)
@@ -829,7 +964,12 @@ namespace Serial_Com
                 return;
             }
 
-            await fluidics.HomeZAxis();
+            var result = await fluidics.HomeZAxis();
+
+            if (result == ErrorCode.Ok)
+            {
+                SetZAxisButtons(true);
+            }
         }
 
         private async void MoveZAxis(object? sender, RoutedEventArgs e)
@@ -844,6 +984,7 @@ namespace Serial_Com
 
             await fluidics.MoveZAxis(float.Parse(trimmed));
         }
+
         private void ZAxisSliderChanged(object? sender, RoutedEventArgs e)
         {
             if (!(sender is Slider { Value: double sldrValue } sldr))
@@ -908,7 +1049,24 @@ namespace Serial_Com
             string height = sliderDepthValue.Content.ToString() ?? "0";
             string trimmed = height.Replace(" mm", "");
 
-            await fluidics.SetHeight(setHeight, float.Parse(trimmed));
+            var result = ErrorCode.BadParameter;
+            try
+            {
+                result = await fluidics.SetHeight(setHeight, float.Parse(trimmed));
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Incorrect Format for Z-Height");
+
+            }
+
+
+            if (result == ErrorCode.Ok)
+            {
+                //If the command was successful, enable the subroutine buttons
+                SetSubroutineButtons(true);
+                SetPIDButtons(true);
+            }
         }
 
         private async void MoveToSetHeight(object? sender, RoutedEventArgs e)
@@ -966,5 +1124,377 @@ namespace Serial_Com
 
 
         }
+
+        private async void DebubbleFluidics(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button { Tag: string state } btn)
+            {
+                return;
+            }
+
+            //Start / Stop debubble
+            if (state == "stopped")
+            {
+                var result = await fluidics.StartDebubble();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "started";
+                    btn.Content = "Stop Debubble";
+                    btn.Background = Brushes.Red;
+                    //Disable other buttons? 
+                }
+            }
+            else if (state == "started")
+            {
+                var result = await fluidics.StopDebubble();
+
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stopped";
+                    btn.Content = "Start Debubble";
+                    btn.Background = Brushes.Green;
+                    //Enable other buttons? 
+                }
+            }
+
+        }
+
+        private async void BackflushFluidics(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button { Tag: string state } btn)
+            {
+                return;
+            }
+
+            //Start / Stop Backflush
+            if (state == "stopped")
+            {
+                var result = await fluidics.StartBackflush();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "started";
+                    btn.Content = "Stop Backflush";
+                    btn.Background = Brushes.Red;
+                    //Disable other buttons? 
+                }
+            }
+            else if (state == "started")
+            {
+                var result = await fluidics.StopBackflush();
+
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stopped";
+                    btn.Content = "Start Backflush";
+                    btn.Background = Brushes.Green;
+                    //Enable other buttons? 
+                }
+            }
+
+        }
+
+        private async void PurgeFilterFluidics(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button { Tag: string state } btn)
+            {
+                return;
+            }
+
+            //Start / Stop Backflush
+            if (state == "stopped")
+            {
+                var result = await fluidics.StartPurgeFilter();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "started";
+                    btn.Content = "Stop Purge Filter";
+                    btn.Background = Brushes.Red;
+                    //Disable other buttons? 
+                }
+            }
+            else if (state == "started")
+            {
+                var result = await fluidics.StopPurgeFilter();
+
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stopped";
+                    btn.Content = "Start Purge Filter";
+                    btn.Background = Brushes.Green;
+                    //Enable other buttons? 
+                }
+            }
+
+        }
+
+        private async void BleachClean(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button { Tag: string state } btn))
+            {
+                return;
+            }
+
+            if (state == "stopped")
+            {
+                var result = await fluidics.BleachCleanStepOne();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stepOne";
+                    btn.Content = "Stop Bleach Clean";
+                    btn.Background = Brushes.Red;
+                }
+
+            }
+            else if (state == "stepOne" || state == "stepTwo")
+            {
+                var result = await fluidics.StopBleachClean();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stopped";
+                    btn.Content = "Start Bleach Clean";
+                    btn.Background = Brushes.Green;
+                }
+            }
+        }
+
+        private async void SamplePathWash(object? sender, RoutedEventArgs e)
+        {
+            if (!(sender is Button { Tag: string state } btn))
+            {
+                return;
+            }
+
+            if (state == "stopped")
+            {
+                var result = await fluidics.StartSamplePathWashStepOne();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stepOne";
+                    btn.Content = "Stop Sample Wash";
+                    btn.Background = Brushes.Red;
+                }
+
+            }
+            else if (state == "stepOne" || state == "stepTwo")
+            {
+                var result = await fluidics.StopSamplePathWash();
+                if (result == ErrorCode.Ok)
+                {
+                    btn.Tag = "stopped";
+                    btn.Content = "Start Sample Wash";
+                    btn.Background = Brushes.Green;
+                }
+            }
+        }
+
+        private async void SendNewTargetSheathRate(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            var sheathRate = sheathRateInputBox.Text;
+
+            await fluidics.SendNewTargetSheathRate(float.Parse(sheathRate));
+
+        }
+
+        private async void SendNewTargetSampleRate(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            var sampleRate = sampleRateInputBox.Text;
+
+            await fluidics.SendNewTargetSampleRate(Int32.Parse(sampleRate));
+
+        }
+
+        private async void SendNewTargetSampleVelocity(object? sender, RoutedEventArgs e)
+        {
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            var sampleVelocity = sampleVelocityInputBox.Text;
+
+            await fluidics.SendNewTargetSampleVelocity(Int32.Parse(sampleVelocity));
+
+        }
+
+        private async void SendNewSheathKP(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            float newKp;
+
+            try
+            {
+                newKp = float.Parse(sheathKPTextbox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Sheath KP Format!");
+                return;
+            }
+
+            await fluidics.SendNewSheathKP(newKp);
+
+        }
+
+        private async void SendNewSheathKI(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            float newKi;
+
+            try
+            {
+                newKi = float.Parse(sheathKITextbox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Sheath KI Format!");
+                return;
+            }
+
+            await fluidics.SendNewSheathKI(newKi);
+
+        }
+
+        private async void SendNewSheathKD(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            float newKD;
+
+            try
+            {
+                newKD = float.Parse(sheathKDTextbox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Sheath KD Format!");
+                return;
+            }
+
+            await fluidics.SendNewSheathKD(newKD);
+
+        }
+
+        private async void SendNewSampleKP(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            float newKp;
+
+            try
+            {
+                newKp = float.Parse(sampleKPTextbox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Sample KP Format!");
+                return;
+            }
+
+            await fluidics.SendNewSampleKP(newKp);
+
+        }
+
+        private async void SendNewSampleKI(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            float newKi;
+
+            try
+            {
+                newKi = float.Parse(sampleKITextbox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Sample KI Format!");
+                return;
+            }
+
+            await fluidics.SendNewSampleKI(newKi);
+
+        }
+
+        private async void SendNewSampleKD(object? sender, RoutedEventArgs e)
+        {
+
+            if (sender is not Button)
+            {
+                return;
+            }
+
+            float newKD;
+
+            try
+            {
+                newKD = float.Parse(sampleKDTextbox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Sample KD Format!");
+                return;
+            }
+
+            await fluidics.SendNewSampleKD(newKD);
+
+        }
+
+        private async void SendNewPropValveBacklash(object? sender, RoutedEventArgs e)
+        {
+            if(sender is not Button)
+            {
+                return;
+            }
+
+            int newBacklash;
+
+            try
+            {
+                newBacklash = Int32.Parse(propValveBacklashTextBox.Text);
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid Backlash Format!");
+                return;
+            }
+
+            await fluidics.SendNewPropValveBacklash(newBacklash);
+
+        }
+
+
     }
 }

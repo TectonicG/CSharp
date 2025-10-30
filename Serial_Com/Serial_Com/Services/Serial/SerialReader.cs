@@ -39,13 +39,16 @@ namespace Serial_Com.Services.Serial
 
                 //Pop out the message from 0 to the delim + enline range (This includes the end line) (Good for me)
                 var msgBytes = _buffer.GetRange(0, delimIndex + _delimiter.Length).ToArray();
+                byte[] decoded;
+                DeviceMessage parsed;
                 //Remove that message from the msgbuffer list
                 _buffer.RemoveRange(0, delimIndex + _delimiter.Length);
                 //Decode and parse the incoming device message
                 try
                 {
-                    var decoded = Cobs.Cobs.CobsDecode(msgBytes);
-                    var parsed = DeviceMessage.Parser.ParseFrom(decoded);
+
+                    decoded = Cobs.Cobs.CobsDecode(msgBytes);
+                    parsed = DeviceMessage.Parser.ParseFrom(decoded);
                     MessageReceived?.Invoke(this, parsed);
 
                     //Look for another delimiter
