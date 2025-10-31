@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dragablz" Version="0.0.3.234" />
+    <PackageReference Include="Google.Protobuf" Version="3.33.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.72.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="ScottPlot.WPF" Version="5.1.57" />
+    <PackageReference Include="System.IO.Ports" Version="9.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator\embedded_proto_options.proto" GrpcServices="None" />
+	<Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\controller.proto" GrpcServices="None" AdditionalImportDirs="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator" />
+	<Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\schema.proto" GrpcServices="None" AdditionalImportDirs="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator" />
+	<Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\fluidics.proto" GrpcServices="None" AdditionalImportDirs="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\embedded_proto\generator" />
+	  <Protobuf Include="C:\Users\NikolasMahaffey\Desktop\Fluidics_Kern\ssm-kernel\libcytospectrum\schema\display.proto" GrpcServices="None" />
+  </ItemGroup>
+
+</Project>
