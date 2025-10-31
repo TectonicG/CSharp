@@ -1,0 +1,3 @@
+[submodule "Fluidics_Toolkit/Fluidics_Toolkit/libcytospectrum"]
+	path = Fluidics_Toolkit/Fluidics_Toolkit/libcytospectrum
+	url = https://github.com/MIFtek/libcytospectrum.git
